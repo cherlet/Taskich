@@ -9,19 +9,24 @@ import UIKit
 
 class TaskCell: UITableViewCell {
     
-    let taskLabel: UILabel = {
+    // MARK: Properties
+    
+    private var task: Task?
+    
+    private let taskLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let checkmarkButton: UIButton = {
+    private let checkmarkButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "circle"), for: .normal)
-        button.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .selected)
         return button
     }()
+    
+    // MARK: Initializers
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -32,11 +37,13 @@ class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(task: Task){
+    func configure(task: Task) {
+        self.task = task
         taskLabel.text = task.label
     }
+
     
-    // MARK: Private
+    // MARK: Private Methods
     
     private func setupCell() {
         contentView.addSubview(taskLabel)
@@ -51,5 +58,25 @@ class TaskCell: UITableViewCell {
             taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 32),
             taskLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+        
+        checkmarkButton.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
     }
+    
+    @objc private func checkmarkButtonTapped() {
+        guard var task = self.task else { return }
+        task.isCompleted = !task.isCompleted
+
+        if task.isCompleted {
+            checkmarkButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
+            taskLabel.textColor = .lightGray
+            taskLabel.attributedText = NSAttributedString(string: task.label, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
+        } else {
+            checkmarkButton.setImage(UIImage(systemName: "circle"), for: .normal)
+            taskLabel.textColor = .black
+            taskLabel.attributedText = NSAttributedString(string: task.label, attributes: [:])
+        }
+        
+        self.task = task
+    }
+
 }
