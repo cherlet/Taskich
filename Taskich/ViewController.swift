@@ -11,7 +11,7 @@ class ViewController: UIViewController {
     
     var tasks = Task.makeTasks()
     
-    let tableView: UITableView = .init()
+    let tableView = UITableView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,8 +34,6 @@ extension ViewController: UITableViewDataSource {
         cell.configure(task: tasks[indexPath.row])
         return cell
     }
-    
-    
 }
 
 extension ViewController: UITableViewDelegate {

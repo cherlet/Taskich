@@ -25,10 +25,15 @@ class TaskCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(task: Task){
+        taskLabel.text = task.label
     }
     
     // MARK: Private
@@ -38,17 +43,13 @@ class TaskCell: UITableViewCell {
         contentView.addSubview(checkmarkButton)
         
         NSLayoutConstraint.activate([
-            checkmarkButton.leadingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 16),
+            checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             checkmarkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkmarkButton.widthAnchor.constraint(equalToConstant: 30),
             checkmarkButton.heightAnchor.constraint(equalToConstant: 30),
             
-            taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 16),
+            taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 32),
             taskLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
-    }
-    
-    func configure(task: Task){
-        taskLabel.text = task.label
     }
 }
