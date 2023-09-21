@@ -31,9 +31,24 @@ class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Private Functions
+    // MARK: Private
     
     private func setupCell() {
+        contentView.addSubview(taskLabel)
+        contentView.addSubview(checkmarkButton)
         
+        NSLayoutConstraint.activate([
+            checkmarkButton.leadingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 16),
+            checkmarkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            checkmarkButton.widthAnchor.constraint(equalToConstant: 30),
+            checkmarkButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 16),
+            taskLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+    }
+    
+    func configure(task: Task){
+        taskLabel.text = task.label
     }
 }
