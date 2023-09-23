@@ -16,7 +16,6 @@ class TaskCell: UITableViewCell {
     private let taskLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         return label
     }()
     
@@ -69,13 +68,13 @@ class TaskCell: UITableViewCell {
         task.isCompleted = !task.isCompleted
 
         if task.isCompleted {
-            UIView.animate(withDuration: 0.5) {
+            UIView.animate(withDuration: 0.3) {
                 self.checkmarkButton.setImage(UIImage(systemName: "square.slash.fill"), for: .normal)
                 self.taskLabel.textColor = .lightGray
                 self.taskLabel.alpha = 0.5
             }
         } else {
-            UIView.animate(withDuration: 0.5) {
+            UIView.animate(withDuration: 0.3) {
                 self.checkmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
                 self.taskLabel.textColor = .black
                 self.taskLabel.alpha = 1.0
