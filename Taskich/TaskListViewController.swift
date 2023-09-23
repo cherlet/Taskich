@@ -1,5 +1,5 @@
 //
-//  TaskLIstViewController.swift
+//  TaskListViewController.swift
 //  Taskich
 //
 //  Created by Усман Махмутхажиев on 20.09.2023.
@@ -15,6 +15,8 @@ class TaskListViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
+        tableView.allowsSelection = false
+        tableView.separatorStyle = .none
     }
 
     // MARK: - Table view data source

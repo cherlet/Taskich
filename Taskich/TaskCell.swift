@@ -16,13 +16,15 @@ class TaskCell: UITableViewCell {
     private let taskLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
     private let checkmarkButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "circle"), for: .normal)
+        button.setImage(UIImage(systemName: "square"), for: .normal)
+        button.tintColor = .black
         return button
     }()
     
@@ -52,8 +54,8 @@ class TaskCell: UITableViewCell {
         NSLayoutConstraint.activate([
             checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             checkmarkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkmarkButton.widthAnchor.constraint(equalToConstant: 30),
-            checkmarkButton.heightAnchor.constraint(equalToConstant: 30),
+            checkmarkButton.widthAnchor.constraint(equalToConstant: 32),
+            checkmarkButton.heightAnchor.constraint(equalToConstant: 32),
             
             taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 32),
             taskLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
@@ -67,14 +69,19 @@ class TaskCell: UITableViewCell {
         task.isCompleted = !task.isCompleted
 
         if task.isCompleted {
-            checkmarkButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
-            taskLabel.textColor = .lightGray
-            taskLabel.attributedText = NSAttributedString(string: task.label, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
+            UIView.animate(withDuration: 0.5) {
+                self.checkmarkButton.setImage(UIImage(systemName: "square.slash.fill"), for: .normal)
+                self.taskLabel.textColor = .lightGray
+                self.taskLabel.alpha = 0.5
+            }
         } else {
-            checkmarkButton.setImage(UIImage(systemName: "circle"), for: .normal)
-            taskLabel.textColor = .black
-            taskLabel.attributedText = NSAttributedString(string: task.label, attributes: [:])
+            UIView.animate(withDuration: 0.5) {
+                self.checkmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
+                self.taskLabel.textColor = .black
+                self.taskLabel.alpha = 1.0
+            }
         }
+
         
         self.task = task
     }
