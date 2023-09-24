@@ -8,7 +8,7 @@
 import UIKit
 
 class TaskListViewController: UITableViewController {
-
+    
     var tasks = [Task]()
     
     override func viewDidLoad() {
@@ -20,7 +20,7 @@ class TaskListViewController: UITableViewController {
         
         navigationItem.title = "Taskich"
         
-
+        
         let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
                                             style: .plain,
                                             target: self,
@@ -29,27 +29,37 @@ class TaskListViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = addTaskButton
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TaskCell", for: indexPath) as? TaskCell else { fatalError() }
-
+        
         cell.configure(task: tasks[indexPath.row])
-
+        
         return cell
     }
     
     // MARK: - Private methods
     @objc private func addTask() {
         let addFormController = AddFormViewController()
+        
         if let sheet = addFormController.sheetPresentationController {
             sheet.detents = [.medium()]
         }
+        
         present(addFormController, animated: true, completion: nil)
+        
+        addFormController.onAddButtonTapped = { [weak self] taskText in
+            if !taskText.isEmpty {
+                let newTask = Task(label: taskText, isCompleted: false)
+                self?.tasks.append(newTask)
+                self?.tableView.reloadData()
+            }
+        }
     }
 }

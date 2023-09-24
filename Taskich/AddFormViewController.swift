@@ -11,6 +11,7 @@ class AddFormViewController: UIViewController {
     
     let textField = UITextField()
     let addButton = UIButton()
+    var onAddButtonTapped: ((String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +23,8 @@ class AddFormViewController: UIViewController {
         addButton.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
         addButton.imageView?.contentMode = .scaleAspectFit
         addButton.tintColor = .black
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+
         
         [textField, addButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -40,4 +43,12 @@ class AddFormViewController: UIViewController {
         ])
     }
     
+    // MARK: - Private methods
+    
+    @objc private func addButtonTapped() {
+        if let taskText = textField.text {
+            onAddButtonTapped?(taskText)
+        }
+        dismiss(animated: true, completion: nil)
+    }
 }
