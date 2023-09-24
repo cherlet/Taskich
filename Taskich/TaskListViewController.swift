@@ -17,16 +17,14 @@ class TaskListViewController: UITableViewController {
         tableView.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
-        
+
         navigationItem.title = "Taskich"
-        
         
         let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
                                             style: .plain,
                                             target: self,
                                             action: #selector(addTask))
         addTaskButton.tintColor = .black
-        
         navigationItem.rightBarButtonItem = addTaskButton
     }
     
@@ -43,6 +41,12 @@ class TaskListViewController: UITableViewController {
         
         return cell
     }
+    
+    // MARK: - Table view design
+    
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return UITableView.automaticDimension
+//    }
     
     // MARK: - Private methods
     @objc private func addTask() {

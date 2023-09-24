@@ -16,6 +16,8 @@ class TaskCell: UITableViewCell {
     private let taskLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         return label
     }()
     
@@ -52,12 +54,12 @@ class TaskCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            checkmarkButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkmarkButton.widthAnchor.constraint(equalToConstant: 32),
-            checkmarkButton.heightAnchor.constraint(equalToConstant: 32),
+            checkmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor),
             
-            taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 32),
-            taskLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 24),
+            taskLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            taskLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            taskLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
         
         checkmarkButton.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
