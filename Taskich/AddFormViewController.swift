@@ -131,6 +131,8 @@ class AddFormViewController: UIViewController {
         dimmedView.alpha = 0
         UIView.animate(withDuration: 0.4) {
             self.dimmedView.alpha = self.dimmedAlpha
+        } completion: { _ in
+            self.textField.becomeFirstResponder()
         }
     }
     

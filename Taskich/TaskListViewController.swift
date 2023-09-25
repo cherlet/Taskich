@@ -46,8 +46,6 @@ class TaskListViewController: UITableViewController {
     @objc private func addTask() {
         let addFormController = AddFormViewController()
         
-        addFormController.textField.becomeFirstResponder() // ---- багает анимацию
-        
         addFormController.modalPresentationStyle = .overCurrentContext
         present(addFormController, animated: false)
         
