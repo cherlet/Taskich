@@ -17,7 +17,7 @@ class TaskListViewController: UITableViewController {
         tableView.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
-
+        
         navigationItem.title = "Taskich"
         
         let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
@@ -42,21 +42,14 @@ class TaskListViewController: UITableViewController {
         return cell
     }
     
-    // MARK: - Table view design
-    
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return UITableView.automaticDimension
-//    }
-    
     // MARK: - Private methods
     @objc private func addTask() {
         let addFormController = AddFormViewController()
         
-        if let sheet = addFormController.sheetPresentationController {
-            sheet.detents = [.medium()]
-        }
+        addFormController.textField.becomeFirstResponder() // ---- багает анимацию
         
-        present(addFormController, animated: true, completion: nil)
+        addFormController.modalPresentationStyle = .overCurrentContext
+        present(addFormController, animated: false)
         
         addFormController.onAddButtonTapped = { [weak self] taskText in
             if !taskText.isEmpty {

@@ -9,22 +9,99 @@ import UIKit
 
 class AddFormViewController: UIViewController {
     
+    
+    // MARK: - View Properties
+    
+    private lazy var formView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private lazy var dimmedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = dimmedAlpha
+        return view
+    }()
+    
+    private let defaultHeight: CGFloat = 300
+    private let dimmedAlpha: CGFloat = 0.6
+    private var formViewHeightConstraint: NSLayoutConstraint?
+    private var formViewBottomConstraint: NSLayoutConstraint?
+    
+    
+    // MARK: - Model properties
+    
     let textField = UITextField()
     let addButton = UIButton()
     var onAddButtonTapped: ((String) -> Void)?
     
+    
+    // MARK: - Life cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .white
+        setupView()
+        setupConstraints()
+        setupForm()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animateShowDimmedView()
+        animatePresentForm()
+    }
+    
+    // MARK: - Button action methods
+    
+    @objc private func addButtonTapped() {
+        if let taskText = textField.text {
+            onAddButtonTapped?(taskText)
+        }
         
+        animateDismissView()
+    }
+    
+    // MARK: - Setup methods
+    
+    private func setupView() {
+        view.backgroundColor = .clear
+    }
+    
+    private func setupConstraints() {
+        view.addSubview(dimmedView)
+        view.addSubview(formView)
+        dimmedView.translatesAutoresizingMaskIntoConstraints = false
+        formView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            formView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            formView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+        
+        formViewHeightConstraint = formView.heightAnchor.constraint(equalToConstant: defaultHeight)
+        formViewBottomConstraint = formView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: defaultHeight)
+        
+        formViewHeightConstraint?.isActive = true
+        formViewBottomConstraint?.isActive = true
+    }
+    
+    private func setupForm() {
         textField.placeholder = "Задача"
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         addButton.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
         addButton.imageView?.contentMode = .scaleAspectFit
         addButton.tintColor = .black
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-
+        
         
         [textField, addButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -32,23 +109,42 @@ class AddFormViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            textField.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -64),
+            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -64),
             
-            //addButton.widthAnchor.constraint(equalToConstant: 32),
-            //addButton.heightAnchor.constraint(equalToConstant: 32),
-            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 16)
+            addButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+            addButton.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16)
         ])
     }
     
-    // MARK: - Private methods
+    // MARK: - Animate methods
     
-    @objc private func addButtonTapped() {
-        if let taskText = textField.text {
-            onAddButtonTapped?(taskText)
+    private func animatePresentForm() {
+        UIView.animate(withDuration: 0.3) {
+            self.formViewBottomConstraint?.constant = 0
+            self.view.layoutIfNeeded()
         }
-        dismiss(animated: true, completion: nil)
+    }
+    
+    private func animateShowDimmedView() {
+        dimmedView.alpha = 0
+        UIView.animate(withDuration: 0.4) {
+            self.dimmedView.alpha = self.dimmedAlpha
+        }
+    }
+    
+    private func animateDismissView() {
+        dimmedView.alpha = dimmedAlpha
+        UIView.animate(withDuration: 0.4) {
+            self.dimmedView.alpha = 0
+        } completion: { _ in
+            self.dismiss(animated: false)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.formViewBottomConstraint?.constant = self.defaultHeight
+            self.view.layoutIfNeeded()
+        }
     }
 }
