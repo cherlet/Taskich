@@ -15,7 +15,7 @@ class AddFormViewController: UIViewController {
     private lazy var formView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 16
         view.clipsToBounds = true
         return view
     }()
@@ -27,7 +27,7 @@ class AddFormViewController: UIViewController {
         return view
     }()
     
-    private let defaultHeight: CGFloat = 300
+    private let defaultHeight: CGFloat = 500
     private let dimmedAlpha: CGFloat = 0.6
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
@@ -52,7 +52,6 @@ class AddFormViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateShowDimmedView()
-        animatePresentForm()
     }
     
     // MARK: - Button action methods
@@ -86,6 +85,7 @@ class AddFormViewController: UIViewController {
             formView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             formView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
+        
         
         formViewHeightConstraint = formView.heightAnchor.constraint(equalToConstant: defaultHeight)
         formViewBottomConstraint = formView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: defaultHeight)
@@ -129,22 +129,24 @@ class AddFormViewController: UIViewController {
     
     private func animateShowDimmedView() {
         dimmedView.alpha = 0
-        UIView.animate(withDuration: 0.4) {
+        UIView.animate(withDuration: 0) {
             self.dimmedView.alpha = self.dimmedAlpha
         } completion: { _ in
             self.textField.becomeFirstResponder()
+            self.animatePresentForm()
         }
     }
     
     private func animateDismissView() {
         dimmedView.alpha = dimmedAlpha
-        UIView.animate(withDuration: 0.4) {
+        UIView.animate(withDuration: 0.3) {
             self.dimmedView.alpha = 0
         } completion: { _ in
             self.dismiss(animated: false)
         }
         
         UIView.animate(withDuration: 0.3) {
+            self.textField.resignFirstResponder()
             self.formViewBottomConstraint?.constant = self.defaultHeight
             self.view.layoutIfNeeded()
         }
