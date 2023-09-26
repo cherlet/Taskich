@@ -68,14 +68,15 @@ class AddFormViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .clear
+        dimmedView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func setupConstraints() {
-        view.addSubview(dimmedView)
-        view.addSubview(formView)
-        dimmedView.translatesAutoresizingMaskIntoConstraints = false
-        formView.translatesAutoresizingMaskIntoConstraints = false
-        
+        [dimmedView, formView].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
         NSLayoutConstraint.activate([
             dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
             dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -86,7 +87,6 @@ class AddFormViewController: UIViewController {
             formView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
         
-        
         formViewHeightConstraint = formView.heightAnchor.constraint(equalToConstant: defaultHeight)
         formViewBottomConstraint = formView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: defaultHeight)
         
@@ -96,6 +96,7 @@ class AddFormViewController: UIViewController {
     
     private func setupForm() {
         textField.placeholder = "Задача"
+        
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         addButton.setImage(UIImage(systemName: "arrow.up.circle.fill", withConfiguration: configuration), for: .normal)
         addButton.imageView?.contentMode = .scaleAspectFit
@@ -104,8 +105,8 @@ class AddFormViewController: UIViewController {
         
         
         [textField, addButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
@@ -137,7 +138,7 @@ class AddFormViewController: UIViewController {
         }
     }
     
-    private func animateDismissView() {
+    @objc private func animateDismissView() {
         dimmedView.alpha = dimmedAlpha
         UIView.animate(withDuration: 0.3) {
             self.dimmedView.alpha = 0
@@ -151,4 +152,12 @@ class AddFormViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
+    
+    // MARK: - Gesture methods
+
+    private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(animateDismissView))
+        return tapGesture
+    }()
+
 }
