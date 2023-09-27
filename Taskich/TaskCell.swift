@@ -1,19 +1,12 @@
-//
-//  TaskCell.swift
-//  Taskich
-//
-//  Created by Усман Махмутхажиев on 20.09.2023.
-//
-
 import UIKit
 
 class TaskCell: UITableViewCell {
     
-    // MARK: Properties
+    // MARK: - Properties
     
     private var task: Task?
     
-    private let taskLabel: UILabel = {
+    private lazy var taskLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -21,15 +14,15 @@ class TaskCell: UITableViewCell {
         return label
     }()
     
-    private let checkmarkButton: UIButton = {
+    private lazy var checkmarkButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "square"), for: .normal)
         button.tintColor = .black
+        button.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    // MARK: Initializers
+    // MARK: - Initializers
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -40,17 +33,19 @@ class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Configuration
+    
     func configure(task: Task) {
         self.task = task
         taskLabel.text = task.label
+        updateCheckmarkButton(task.isCompleted)
     }
-
     
-    // MARK: Private Methods
+    // MARK: - Setup Methods
     
     private func setupCell() {
-        contentView.addSubview(taskLabel)
         contentView.addSubview(checkmarkButton)
+        contentView.addSubview(taskLabel)
         
         NSLayoutConstraint.activate([
             checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -61,30 +56,26 @@ class TaskCell: UITableViewCell {
             taskLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             taskLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
-        
-        checkmarkButton.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
     }
+    
+    // MARK: - Private Methods
     
     @objc private func checkmarkButtonTapped() {
         guard var task = self.task else { return }
         task.isCompleted = !task.isCompleted
-
-        if task.isCompleted {
-            UIView.animate(withDuration: 0.3) {
-                self.checkmarkButton.setImage(UIImage(systemName: "square.slash.fill"), for: .normal)
-                self.taskLabel.textColor = .lightGray
-                self.taskLabel.alpha = 0.5
-            }
-        } else {
-            UIView.animate(withDuration: 0.3) {
-                self.checkmarkButton.setImage(UIImage(systemName: "square"), for: .normal)
-                self.taskLabel.textColor = .black
-                self.taskLabel.alpha = 1.0
-            }
-        }
-
-        
+        updateCheckmarkButton(task.isCompleted)
         self.task = task
     }
-
+    
+    private func updateCheckmarkButton(_ isCompleted: Bool) {
+        let imageName = isCompleted ? "square.slash.fill" : "square"
+        let textColor = isCompleted ? UIColor.lightGray : UIColor.black
+        let textAlpha: CGFloat = isCompleted ? 0.5 : 1.0
+        
+        UIView.animate(withDuration: 0.3) {
+            self.checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
+            self.taskLabel.textColor = textColor
+            self.taskLabel.alpha = textAlpha
+        }
+    }
 }
