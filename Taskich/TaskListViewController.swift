@@ -10,7 +10,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         setupNavigationBar()
         getTestCells()
     }
-
+    
     // MARK: - Setup methods
     
     private func setupTableView() {
@@ -104,6 +104,22 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let previewParameters = UIDragPreviewParameters()
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            let bezierPath = UIBezierPath(roundedRect:cell.bounds.insetBy(dx: 8, dy: 0),
+                                          cornerRadius: 8.0)
+            
+            previewParameters.visiblePath = bezierPath
+        }
+        
+        return previewParameters
+    }
+
+    
+    
     
     // MARK: - Test Methods
     

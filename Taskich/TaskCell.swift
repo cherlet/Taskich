@@ -8,7 +8,6 @@ class TaskCell: UITableViewCell {
     
     private lazy var taskLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         return label
@@ -16,7 +15,6 @@ class TaskCell: UITableViewCell {
     
     private lazy var checkmarkButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .black
         button.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
         return button
@@ -39,26 +37,29 @@ class TaskCell: UITableViewCell {
         self.task = task
         taskLabel.text = task.label
         updateCheckmarkButton(task.isCompleted)
+        self.selectionStyle = .none
     }
     
     // MARK: - Setup Methods
     
     private func setupCell() {
-        contentView.addSubview(checkmarkButton)
-        contentView.addSubview(taskLabel)
+        [checkmarkButton, taskLabel].forEach {
+            contentView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
+            checkmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            checkmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor),
             
+            taskLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             taskLabel.leadingAnchor.constraint(equalTo: checkmarkButton.leadingAnchor, constant: 24),
             taskLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            taskLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             taskLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
     
-    // MARK: - Private Methods
+    // MARK: - Other Methods
     
     @objc private func checkmarkButtonTapped() {
         guard var task = self.task else { return }
