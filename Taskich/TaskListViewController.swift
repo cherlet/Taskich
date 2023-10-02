@@ -47,10 +47,20 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     private func setupEditModeToolbar() {
-        editModeToolbar = EditModeToolbarView(frame: CGRect(x: 150, y: 600, width: 100, height: 40))
         view.addSubview(editModeToolbar)
-        
         editModeToolbar.isHidden = true
+        
+        editModeToolbar.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            editModeToolbar.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            editModeToolbar.heightAnchor.constraint(equalToConstant: 48),
+            
+            editModeToolbar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            editModeToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            editModeToolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 20),
+            editModeToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24)
+        ])
         
         editModeToolbar.deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
