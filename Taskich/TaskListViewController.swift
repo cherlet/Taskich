@@ -176,19 +176,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             selectedRows.insert(indexPath.row)
         }
         
-        UIView.animate(withDuration: 0.1) {
-            cell.transform = CGAffineTransform(translationX: -10, y: 0)
-        } completion: { _ in
-            UIView.animate(withDuration: 0.1) {
-                cell.transform = CGAffineTransform.identity
-            } completion: { _ in
-                self.tableView.reloadRows(at: [indexPath], with: .none)
-            }
-        }
-        
-        if selectedRows.isEmpty {
-            cancelEditing()
-        }
+        editingGestureAnimation(for: cell, at: indexPath)
     }
     
     @objc private func cancelEditing() {
@@ -196,6 +184,22 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         selectedRows.removeAll()
         setupNavigationBar()
         tableView.reloadData()
+    }
+    
+    private func editingGestureAnimation(for cell: UITableViewCell, at indexPath: IndexPath) {
+        UIView.animate(withDuration: 0.1, animations: {
+            cell.transform = CGAffineTransform(translationX: -10, y: 0)
+        }) { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                cell.transform = CGAffineTransform.identity
+            }) { _ in
+                if self.selectedRows.isEmpty {
+                    self.cancelEditing()
+                } else {
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+        }
     }
     
     
@@ -209,3 +213,5 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", isCompleted: false))
     }
 }
+
+
