@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		076ED3FD2ABF846100908C3A /* AddFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076ED3FC2ABF846100908C3A /* AddFormViewController.swift */; };
+		0792F3FF2ACB2E17002D8BF3 /* EditModeToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */; };
 		07DA6E7B2ABB7963002386B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E7A2ABB7963002386B7 /* AppDelegate.swift */; };
 		07DA6E7D2ABB7963002386B7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E7C2ABB7963002386B7 /* SceneDelegate.swift */; };
 		07DA6E842ABB7967002386B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07DA6E832ABB7967002386B7 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		076ED3FC2ABF846100908C3A /* AddFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFormViewController.swift; sourceTree = "<group>"; };
+		0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditModeToolbarView.swift; sourceTree = "<group>"; };
 		07DA6E772ABB7963002386B7 /* Taskich.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taskich.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07DA6E7A2ABB7963002386B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		07DA6E7C2ABB7963002386B7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				07DA6E942ABB88D0002386B7 /* TaskCell.swift */,
 				07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */,
 				076ED3FC2ABF846100908C3A /* AddFormViewController.swift */,
+				0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */,
 				07DA6E832ABB7967002386B7 /* Assets.xcassets */,
 				07DA6E852ABB7967002386B7 /* LaunchScreen.storyboard */,
 				07DA6E882ABB7967002386B7 /* Info.plist */,
@@ -146,6 +149,7 @@
 				07DA6E8F2ABB7F25002386B7 /* TaskListViewController.swift in Sources */,
 				07DA6E912ABB865D002386B7 /* Task.swift in Sources */,
 				076ED3FD2ABF846100908C3A /* AddFormViewController.swift in Sources */,
+				0792F3FF2ACB2E17002D8BF3 /* EditModeToolbarView.swift in Sources */,
 				07DA6E7B2ABB7963002386B7 /* AppDelegate.swift in Sources */,
 				07DA6E952ABB88D0002386B7 /* TaskCell.swift in Sources */,
 				07DA6E7D2ABB7963002386B7 /* SceneDelegate.swift in Sources */,

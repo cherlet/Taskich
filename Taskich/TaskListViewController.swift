@@ -5,12 +5,14 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     var tasks = [Task]()
     var isEditingMode = false
     var selectedRows = Set<Int>()
+    var editModeToolbar = EditModeToolbarView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
         setupNavigationBar()
+        setupEditModeToolbar()
         getTestCells()
     }
     
@@ -42,6 +44,15 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             addTaskButton.tintColor = .black
             navigationItem.rightBarButtonItem = addTaskButton
         }
+    }
+    
+    private func setupEditModeToolbar() {
+        editModeToolbar = EditModeToolbarView(frame: CGRect(x: 150, y: 600, width: 100, height: 40))
+        view.addSubview(editModeToolbar)
+        
+        editModeToolbar.isHidden = true
+        
+        editModeToolbar.deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Table view data source
@@ -168,6 +179,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
         
         isEditingMode = true
+        editModeToolbar.isHidden = false
         setupNavigationBar()
         
         if selectedRows.contains(indexPath.row) {
@@ -182,6 +194,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     @objc private func cancelEditing() {
         isEditingMode = false
         selectedRows.removeAll()
+        editModeToolbar.isHidden = true
         setupNavigationBar()
         tableView.reloadData()
     }
@@ -200,6 +213,20 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
                 }
             }
         }
+    }
+    
+    private func deleteSelectedRows() {
+        let sortedSelectedRows = selectedRows.sorted(by: >)
+        for indexPathRow in sortedSelectedRows {
+            tasks.remove(at: indexPathRow)
+        }
+        selectedRows.removeAll()
+        tableView.reloadData()
+    }
+    
+    @objc private func deleteButtonTapped() {
+        deleteSelectedRows()
+        cancelEditing()
     }
     
     
