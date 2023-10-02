@@ -1,7 +1,10 @@
 import UIKit
 
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
+    
     var tasks = [Task]()
+    var isEditingMode = false
+    var selectedRows = Set<Int>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,27 +27,20 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     private func setupNavigationBar() {
         title = "Taskich"
         
-        let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
-                                            style: .plain,
-                                            target: self,
-                                            action: #selector(addTask))
-        addTaskButton.tintColor = .black
-        navigationItem.rightBarButtonItem = addTaskButton
-    }
-    
-    // MARK: - Private methods
-    
-    @objc private func addTask() {
-        let addFormController = AddFormViewController()
-        addFormController.modalPresentationStyle = .overCurrentContext
-        present(addFormController, animated: false)
-        
-        addFormController.onAddButtonTapped = { [weak self] taskText in
-            if !taskText.isEmpty {
-                let newTask = Task(label: taskText, isCompleted: false)
-                self?.tasks.append(newTask)
-                self?.tableView.reloadData()
-            }
+        if isEditingMode {
+            let cancelTaskButton = UIBarButtonItem(image: UIImage(systemName: "arrow.left.circle"),
+                                                   style: .plain,
+                                                   target: self,
+                                                   action: #selector(cancelEditing))
+            cancelTaskButton.tintColor = .black
+            navigationItem.rightBarButtonItem = cancelTaskButton
+        } else {
+            let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
+                                                style: .plain,
+                                                target: self,
+                                                action: #selector(addTask))
+            addTaskButton.tintColor = .black
+            navigationItem.rightBarButtonItem = addTaskButton
         }
     }
     
@@ -55,16 +51,45 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Config reusable cell
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TaskCell", for: indexPath) as? TaskCell else {
             fatalError()
         }
         
+        // Swipe gesture
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(editingGestureRecognizer(_:)))
+        swipeLeftGesture.direction = .left
+        cell.addGestureRecognizer(swipeLeftGesture)
+        
+        // TaskCell.configure
         cell.configure(task: tasks[indexPath.row])
+        
+        // Design for editingMode
+        cell.backgroundColor = selectedRows.contains(indexPath.row) ? UIColor.lightGray.withAlphaComponent(0.3) : UIColor.white
         
         return cell
     }
     
     // MARK: - Table view delegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if isEditingMode {
+            
+            if selectedRows.contains(indexPath.row) {
+                selectedRows.remove(indexPath.row)
+            } else {
+                selectedRows.insert(indexPath.row)
+            }
+            
+            tableView.reloadRows(at: [indexPath], with: .none)
+            
+            if selectedRows.isEmpty {
+                cancelEditing()
+            }
+            
+        } else {
+        }
+    }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         return true
@@ -117,8 +142,61 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         return previewParameters
     }
-
     
+    // MARK: - Other Methods
+    
+    @objc private func addTask() {
+        let addFormController = AddFormViewController()
+        addFormController.modalPresentationStyle = .overCurrentContext
+        present(addFormController, animated: false)
+        
+        addFormController.onAddButtonTapped = { [weak self] taskText in
+            if !taskText.isEmpty {
+                let newTask = Task(label: taskText, isCompleted: false)
+                self?.tasks.append(newTask)
+                self?.tableView.reloadData()
+            }
+        }
+    }
+    
+    @objc private func editingGestureRecognizer(_ gesture: UISwipeGestureRecognizer) {
+        
+        guard let indexPath = tableView.indexPathForRow(at: gesture.location(in: tableView)),
+              let cell = tableView.cellForRow(at: indexPath)
+        else {
+            return
+        }
+        
+        isEditingMode = true
+        setupNavigationBar()
+        
+        if selectedRows.contains(indexPath.row) {
+            selectedRows.remove(indexPath.row)
+        } else {
+            selectedRows.insert(indexPath.row)
+        }
+        
+        UIView.animate(withDuration: 0.1) {
+            cell.transform = CGAffineTransform(translationX: -10, y: 0)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                cell.transform = CGAffineTransform.identity
+            } completion: { _ in
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+        }
+        
+        if selectedRows.isEmpty {
+            cancelEditing()
+        }
+    }
+    
+    @objc private func cancelEditing() {
+        isEditingMode = false
+        selectedRows.removeAll()
+        setupNavigationBar()
+        tableView.reloadData()
+    }
     
     
     // MARK: - Test Methods
