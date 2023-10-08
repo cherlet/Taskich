@@ -16,6 +16,7 @@
 		07DA6E8F2ABB7F25002386B7 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */; };
 		07DA6E912ABB865D002386B7 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E902ABB865D002386B7 /* Task.swift */; };
 		07DA6E952ABB88D0002386B7 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E942ABB88D0002386B7 /* TaskCell.swift */; };
+		07E3E8972AD2B9C600B926D1 /* TaskPresenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		07DA6E902ABB865D002386B7 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		07DA6E942ABB88D0002386B7 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
+		07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 				07DA6E942ABB88D0002386B7 /* TaskCell.swift */,
 				07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */,
 				076ED3FC2ABF846100908C3A /* AddFormViewController.swift */,
+				07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */,
 				0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */,
 				07DA6E832ABB7967002386B7 /* Assets.xcassets */,
 				07DA6E852ABB7967002386B7 /* LaunchScreen.storyboard */,
@@ -148,6 +151,7 @@
 			files = (
 				07DA6E8F2ABB7F25002386B7 /* TaskListViewController.swift in Sources */,
 				07DA6E912ABB865D002386B7 /* Task.swift in Sources */,
+				07E3E8972AD2B9C600B926D1 /* TaskPresenterViewController.swift in Sources */,
 				076ED3FD2ABF846100908C3A /* AddFormViewController.swift in Sources */,
 				0792F3FF2ACB2E17002D8BF3 /* EditModeToolbarView.swift in Sources */,
 				07DA6E7B2ABB7963002386B7 /* AppDelegate.swift in Sources */,

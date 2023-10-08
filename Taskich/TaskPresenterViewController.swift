@@ -1,14 +1,13 @@
 //
-//  AddFormViewController.swift
+//  TaskPresenterViewController.swift
 //  Taskich
 //
-//  Created by Усман Махмутхажиев on 23.09.2023.
+//  Created by Усман Махмутхажиев on 08.10.2023.
 //
 
 import UIKit
 
-class AddFormViewController: UIViewController {
-    
+class TaskPresenterViewController: UIViewController {
     // MARK: - View Properties
     private lazy var formView: UIView = {
         let view = UIView()
@@ -30,14 +29,12 @@ class AddFormViewController: UIViewController {
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
     
-    
     // MARK: - Model properties
     let textField = UITextField()
-    let addButton = UIButton()
-    var onAddButtonTapped: ((String) -> Void)?
+    var taskText: String?
+    var onTaskTextUpdate: ((String) -> Void)?
     
-    
-    // MARK: - Life cycle
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupConstraints()
@@ -55,7 +52,7 @@ class AddFormViewController: UIViewController {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        
         NSLayoutConstraint.activate([
             dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
             dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -73,43 +70,22 @@ class AddFormViewController: UIViewController {
         formViewBottomConstraint?.isActive = true
     }
     
-    private func setupForm() {
+    func setupForm() {
         view.backgroundColor = .clear
         dimmedView.addGestureRecognizer(tapGestureRecognizer)
         
-        textField.placeholder = "Задача"
+        textField.text = taskText
         textField.returnKeyType = .done
         textField.delegate = self
         
-        let configuration = UIImage.SymbolConfiguration(pointSize: 24)
-        addButton.setImage(UIImage(systemName: "arrow.up.circle", withConfiguration: configuration), for: .normal)
-        addButton.imageView?.contentMode = .scaleAspectFit
-        addButton.tintColor = .black
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        
-        
-        [textField, addButton].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        view.addSubview(textField)
+        textField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -64),
-            
-            addButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
-            addButton.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16)
+            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16)
         ])
-    }
-    
-    // MARK: - Button action methods
-    @objc private func addButtonTapped() {
-        if let taskText = textField.text {
-            onAddButtonTapped?(taskText)
-        }
-        
-        animateDismissView()
     }
     
     // MARK: - Animate methods
@@ -125,7 +101,6 @@ class AddFormViewController: UIViewController {
         UIView.animate(withDuration: 0) {
             self.dimmedView.alpha = self.dimmedAlpha
         } completion: { _ in
-            self.textField.becomeFirstResponder()
             self.animatePresentForm()
         }
     }
@@ -155,11 +130,10 @@ class AddFormViewController: UIViewController {
 }
 
 // MARK: - Extensions
-
-extension AddFormViewController: UITextFieldDelegate {
+extension TaskPresenterViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let taskText = textField.text, !taskText.isEmpty {
-            onAddButtonTapped?(taskText)
+            onTaskTextUpdate?(taskText)
             animateDismissView()
         }
         return true

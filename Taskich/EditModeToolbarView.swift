@@ -44,7 +44,7 @@ class EditModeToolbarView: UIStackView {
         layer.cornerRadius = 8
         axis = .horizontal
         isLayoutMarginsRelativeArrangement = true
-        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
+        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 20)
         alignment = .center
         distribution = .equalSpacing
     }

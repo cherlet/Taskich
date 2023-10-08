@@ -2,11 +2,14 @@ import UIKit
 
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
     
+    // MARK: - Model Properties
     var tasks = [Task]()
     var isEditingMode = false
     var selectedRows = Set<Int>()
     var editModeToolbar = EditModeToolbarView()
     
+    
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -17,7 +20,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     // MARK: - Setup methods
-    
     private func setupTableView() {
         tableView.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
         tableView.separatorStyle = .none
@@ -52,13 +54,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         editModeToolbar.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            editModeToolbar.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
+            editModeToolbar.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
             editModeToolbar.heightAnchor.constraint(equalToConstant: 48),
             
-            editModeToolbar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            editModeToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            editModeToolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 20),
+            editModeToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -5),
             editModeToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24)
         ])
         
@@ -66,7 +65,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     // MARK: - Table view data source
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasks.count
     }
@@ -78,7 +76,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
         
         // Swipe gesture
-        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(editingGestureRecognizer(_:)))
+        let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(leftSwipeGestureRecognizer(_:)))
         swipeLeftGesture.direction = .left
         cell.addGestureRecognizer(swipeLeftGesture)
         
@@ -86,16 +84,20 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         cell.configure(task: tasks[indexPath.row])
         
         // Design for editingMode
-        cell.backgroundColor = selectedRows.contains(indexPath.row) ? UIColor.lightGray.withAlphaComponent(0.3) : UIColor.white
+        if selectedRows.contains(indexPath.row) {
+            cell.layer.cornerRadius = 8
+            cell.selectedBackground.isHidden = false
+        } else {
+            cell.layer.cornerRadius = 0
+            cell.selectedBackground.isHidden = true
+        }
         
         return cell
     }
     
     // MARK: - Table view delegate
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditingMode {
-            
             if selectedRows.contains(indexPath.row) {
                 selectedRows.remove(indexPath.row)
             } else {
@@ -107,8 +109,8 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             if selectedRows.isEmpty {
                 cancelEditing()
             }
-            
         } else {
+            presentTask(at: indexPath)
         }
     }
     
@@ -117,16 +119,22 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if isEditingMode {
+            cancelEditing()
+        }
+        
         let movedTask = tasks.remove(at: sourceIndexPath.row)
         tasks.insert(movedTask, at: destinationIndexPath.row)
     }
     
-    // MARK: Drag&Drop protocol
-    
+    // MARK: - Drag&Drop protocol
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         let task = tasks[indexPath.row]
         let itemProvider = NSItemProvider(object: task.label as NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
+        
+        editModeToolbar.isHidden = true
+        
         return [dragItem]
     }
     
@@ -164,23 +172,37 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         return previewParameters
     }
     
-    // MARK: - Other Methods
-    
+    // MARK: - Present Methods
     @objc private func addTask() {
         let addFormController = AddFormViewController()
         addFormController.modalPresentationStyle = .overCurrentContext
         present(addFormController, animated: false)
         
-        addFormController.onAddButtonTapped = { [weak self] taskText in
+        addFormController.onAddButtonTapped = { taskText in
             if !taskText.isEmpty {
                 let newTask = Task(label: taskText, isCompleted: false)
-                self?.tasks.append(newTask)
-                self?.tableView.reloadData()
+                self.tasks.append(newTask)
+                self.tableView.reloadData()
             }
         }
     }
     
-    @objc private func editingGestureRecognizer(_ gesture: UISwipeGestureRecognizer) {
+    private func presentTask(at indexPath: IndexPath) {
+        let presenterViewController = TaskPresenterViewController()
+        presenterViewController.modalPresentationStyle = .overCurrentContext
+        
+        presenterViewController.taskText = tasks[indexPath.row].label
+        
+        presenterViewController.onTaskTextUpdate = { newText in
+            self.tasks[indexPath.row].label = newText
+            self.tableView.reloadData()
+        }
+        
+        present(presenterViewController, animated: false)
+    }
+    
+    // MARK: - Other Methods
+    @objc private func leftSwipeGestureRecognizer(_ gesture: UISwipeGestureRecognizer) {
         
         guard let indexPath = tableView.indexPathForRow(at: gesture.location(in: tableView)),
               let cell = tableView.cellForRow(at: indexPath)
@@ -198,7 +220,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             selectedRows.insert(indexPath.row)
         }
         
-        editingGestureAnimation(for: cell, at: indexPath)
+        leftSwipeGestureAnimation(for: cell, at: indexPath)
     }
     
     @objc private func cancelEditing() {
@@ -209,13 +231,13 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         tableView.reloadData()
     }
     
-    private func editingGestureAnimation(for cell: UITableViewCell, at indexPath: IndexPath) {
-        UIView.animate(withDuration: 0.1, animations: {
+    private func leftSwipeGestureAnimation(for cell: UITableViewCell, at indexPath: IndexPath) {
+        UIView.animate(withDuration: 0.1) {
             cell.transform = CGAffineTransform(translationX: -10, y: 0)
-        }) { _ in
-            UIView.animate(withDuration: 0.1, animations: {
+        } completion: { _ in
+            UIView.animate(withDuration: 0.1) {
                 cell.transform = CGAffineTransform.identity
-            }) { _ in
+            } completion: { _ in
                 if self.selectedRows.isEmpty {
                     self.cancelEditing()
                 } else {
@@ -241,7 +263,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     
     // MARK: - Test Methods
-    
     private func getTestCells() {
         tasks.append(Task(label: "Short task", isCompleted: false))
         tasks.append(Task(label: "Medium length task for testing", isCompleted: false))

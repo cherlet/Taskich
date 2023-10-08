@@ -20,6 +20,14 @@ class TaskCell: UITableViewCell {
         return button
     }()
     
+    lazy var selectedBackground: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
+        view.layer.cornerRadius = 8
+        view.isHidden = true
+        return view
+    }()
+    
     // MARK: - Initializers
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -43,12 +51,17 @@ class TaskCell: UITableViewCell {
     // MARK: - Setup Methods
     
     private func setupCell() {
-        [checkmarkButton, taskLabel].forEach {
+        [selectedBackground, checkmarkButton, taskLabel].forEach {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
+            selectedBackground.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
+            selectedBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
+            selectedBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -5),
+            selectedBackground.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
             checkmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             checkmarkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             
