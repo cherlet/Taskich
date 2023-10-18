@@ -80,6 +80,7 @@ class AddFormViewController: UIViewController {
         textField.placeholder = "Задача"
         textField.returnKeyType = .done
         textField.delegate = self
+        textField.contentMode = .topLeft
         
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         addButton.setImage(UIImage(systemName: "arrow.up.circle", withConfiguration: configuration), for: .normal)
