@@ -62,6 +62,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         ])
         
         editModeToolbar.deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+        editModeToolbar.dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - Table view data source
@@ -259,6 +260,12 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     @objc private func deleteButtonTapped() {
         deleteSelectedRows()
         cancelEditing()
+    }
+    
+    @objc private func dateButtonTapped() {
+        let datePickerViewController = DatePickerViewController()
+        datePickerViewController.modalPresentationStyle = .overFullScreen
+        datePickerViewController.appear(sender: self)
     }
     
     

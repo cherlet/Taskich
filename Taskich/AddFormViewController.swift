@@ -1,10 +1,3 @@
-//
-//  AddFormViewController.swift
-//  Taskich
-//
-//  Created by Усман Махмутхажиев on 23.09.2023.
-//
-
 import UIKit
 
 class AddFormViewController: UIViewController {
@@ -80,7 +73,6 @@ class AddFormViewController: UIViewController {
         textField.placeholder = "Задача"
         textField.returnKeyType = .done
         textField.delegate = self
-        textField.contentMode = .topLeft
         
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         addButton.setImage(UIImage(systemName: "arrow.up.circle", withConfiguration: configuration), for: .normal)

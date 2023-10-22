@@ -1,10 +1,3 @@
-//
-//  TaskPresenterViewController.swift
-//  Taskich
-//
-//  Created by Усман Махмутхажиев on 08.10.2023.
-//
-
 import UIKit
 
 class TaskPresenterViewController: UIViewController {

@@ -1,10 +1,3 @@
-//
-//  EditModeToolbarView.swift
-//  Taskich
-//
-//  Created by Усман Махмутхажиев on 02.10.2023.
-//
-
 import UIKit
 
 class EditModeToolbarView: UIStackView {
