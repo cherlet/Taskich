@@ -122,8 +122,16 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width / 7
+        if isLittleSpace() {
+            return CGSize(width: width, height: width - 9.3)
+        }
         return CGSize(width: width, height: width)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
@@ -257,6 +265,25 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         let displayedYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
         
         previousButton.isEnabled = !(displayedYearMonth.year == currentYearMonth.year && displayedYearMonth.month == currentYearMonth.month)
+    }
+    
+    private func isLittleSpace() -> Bool {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: currentDate)
+        let firstDay = calendar.date(from: components)!
+        
+        let range = calendar.range(of: .day, in: .month, for: currentDate)!
+        let numberOfDays = range.count
+        
+        let weekday = calendar.component(.weekday, from: firstDay)
+        
+        if weekday == 7 && numberOfDays > 30 {
+            return true
+        } else if weekday == 1 && numberOfDays > 29 {
+            return true
+        }
+        
+        return false
     }
 }
 

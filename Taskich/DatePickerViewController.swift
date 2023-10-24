@@ -38,7 +38,7 @@ class DatePickerViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             formView.widthAnchor.constraint(equalToConstant: 360),
-            formView.heightAnchor.constraint(equalToConstant: 420),
+            formView.heightAnchor.constraint(equalToConstant: 360),
             formView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             formView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
