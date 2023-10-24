@@ -14,6 +14,8 @@ class WeekdaysHeaderView: UICollectionReusableView {
     }
     
     private func setupViews() {
+        backgroundColor = .white
+        
         for day in daysOfWeek {
             let label = UILabel()
             label.text = day

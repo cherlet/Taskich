@@ -26,9 +26,6 @@ class DatePickerViewController: UIViewController {
         setupDatePickerView()
     }
     
-    private var formViewWidthConstraint: NSLayoutConstraint?
-    private var formViewHeightConstraint: NSLayoutConstraint?
-    
     private func setupView() {
         view.backgroundColor = .clear
         
@@ -91,9 +88,6 @@ class DatePickerViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hide))
         return tapGesture
     }()
-    
-    
-
 }
 
 
