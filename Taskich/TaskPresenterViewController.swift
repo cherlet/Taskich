@@ -25,6 +25,7 @@ class TaskPresenterViewController: UIViewController {
     // MARK: - Model properties
     let textField = UITextField()
     var taskText: String?
+    var taskDate: Date?
     var onTaskTextUpdate: ((String) -> Void)?
     
     // MARK: - Life Cycle
@@ -32,6 +33,7 @@ class TaskPresenterViewController: UIViewController {
         super.viewDidLoad()
         setupConstraints()
         setupForm()
+        print("\(taskDate ?? Date())")
     }
     
     override func viewDidAppear(_ animated: Bool) {

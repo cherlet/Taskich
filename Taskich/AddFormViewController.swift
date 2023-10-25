@@ -22,12 +22,12 @@ class AddFormViewController: UIViewController {
     private let dimmedAlpha: CGFloat = 0.6
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
-    
-    
-    // MARK: - Model properties
+
     let textField = UITextField()
     let addButton = UIButton()
-    var onAddButtonTapped: ((String) -> Void)?
+    let dateButton = UIButton()
+    let datePickerViewController = DatePickerViewController()
+    var onAddButtonTapped: ((String, Date) -> Void)?
     
     
     // MARK: - Life cycle
@@ -74,35 +74,50 @@ class AddFormViewController: UIViewController {
         textField.returnKeyType = .done
         textField.delegate = self
         
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        
         let configuration = UIImage.SymbolConfiguration(pointSize: 24)
         addButton.setImage(UIImage(systemName: "arrow.up.circle", withConfiguration: configuration), for: .normal)
-        addButton.imageView?.contentMode = .scaleAspectFit
-        addButton.tintColor = .black
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        dateButton.setImage(UIImage(systemName: "calendar", withConfiguration: configuration), for: .normal)
         
+        [addButton, dateButton].forEach {
+            $0.imageView?.contentMode = .scaleAspectFit
+            $0.tintColor = .black
+        }
         
-        [textField, addButton].forEach {
+        [textField, addButton, dateButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -64),
+            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+    
+            addButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            addButton.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             
-            addButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
-            addButton.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16)
+            dateButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            dateButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
         ])
     }
     
     // MARK: - Button action methods
     @objc private func addButtonTapped() {
+        let date = datePickerViewController.submit()
+        
         if let taskText = textField.text {
-            onAddButtonTapped?(taskText)
+            onAddButtonTapped?(taskText, date)
         }
         
         animateDismissView()
+    }
+    
+    @objc private func dateButtonTapped() {
+        datePickerViewController.modalPresentationStyle = .overFullScreen
+        datePickerViewController.appear(sender: self)
     }
     
     // MARK: - Animate methods
@@ -151,8 +166,10 @@ class AddFormViewController: UIViewController {
 
 extension AddFormViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let date = datePickerViewController.submit()
+        
         if let taskText = textField.text, !taskText.isEmpty {
-            onAddButtonTapped?(taskText)
+            onAddButtonTapped?(taskText, date)
             animateDismissView()
         }
         return true

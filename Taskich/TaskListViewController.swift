@@ -179,9 +179,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         addFormController.modalPresentationStyle = .overCurrentContext
         present(addFormController, animated: false)
         
-        addFormController.onAddButtonTapped = { taskText in
+        addFormController.onAddButtonTapped = { taskText, date in
             if !taskText.isEmpty {
-                let newTask = Task(label: taskText, isCompleted: false)
+                let newTask = Task(label: taskText, date: date, isCompleted: false)
                 self.tasks.append(newTask)
                 self.tableView.reloadData()
             }
@@ -193,6 +193,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         presenterViewController.modalPresentationStyle = .overCurrentContext
         
         presenterViewController.taskText = tasks[indexPath.row].label
+        presenterViewController.taskDate = tasks[indexPath.row].date
         
         presenterViewController.onTaskTextUpdate = { newText in
             self.tasks[indexPath.row].label = newText
@@ -271,11 +272,11 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     // MARK: - Test Methods
     private func getTestCells() {
-        tasks.append(Task(label: "Short task", isCompleted: false))
-        tasks.append(Task(label: "Medium length task for testing", isCompleted: false))
-        tasks.append(Task(label: "A longer task label for testing purposes", isCompleted: false))
-        tasks.append(Task(label: "This is a quite long task label for testing different lengths", isCompleted: false))
-        tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", isCompleted: false))
+        tasks.append(Task(label: "Short task", date: Date(), isCompleted: false))
+        tasks.append(Task(label: "Medium length task for testing", date: Date(), isCompleted: false))
+        tasks.append(Task(label: "A longer task label for testing purposes", date: Date(), isCompleted: false))
+        tasks.append(Task(label: "This is a quite long task label for testing different lengths", date: Date(), isCompleted: false))
+        tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", date: Date(), isCompleted: false))
     }
 }
 

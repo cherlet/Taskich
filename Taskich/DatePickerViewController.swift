@@ -20,6 +20,32 @@ class DatePickerViewController: UIViewController {
         return view
     }()
     
+    private lazy var submitButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Сохранить", for: .normal)
+        button.setTitleColor(UIColor.systemGreen, for: .normal)
+        return button
+    }()
+    
+    private lazy var cancelButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Отмена", for: .normal)
+        button.setTitleColor(UIColor.gray, for: .normal)
+        return button
+    }()
+    
+    private let separatorLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        return view
+    }()
+    
+    private let verticalSeparatorLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -30,6 +56,8 @@ class DatePickerViewController: UIViewController {
         view.backgroundColor = .clear
         
         dimmedView.addGestureRecognizer(tapGestureRecognizer)
+        cancelButton.addTarget(self, action: #selector(hide), for: .touchUpInside)
+        submitButton.addTarget(self, action: #selector(submit), for: .touchUpInside)
         
         [dimmedView, formView].forEach {
             view.addSubview($0)
@@ -38,26 +66,47 @@ class DatePickerViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             formView.widthAnchor.constraint(equalToConstant: 360),
-            formView.heightAnchor.constraint(equalToConstant: 360),
+            formView.heightAnchor.constraint(equalToConstant: 400),
             formView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             formView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
             dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
     private func setupDatePickerView() {
-        formView.addSubview(datePickerView)
-        datePickerView.translatesAutoresizingMaskIntoConstraints = false
+        [datePickerView, separatorLine, verticalSeparatorLine, cancelButton, submitButton].forEach {
+            formView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
             datePickerView.topAnchor.constraint(equalTo: formView.topAnchor),
-            datePickerView.bottomAnchor.constraint(equalTo: formView.bottomAnchor),
             datePickerView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
-            datePickerView.trailingAnchor.constraint(equalTo: formView.trailingAnchor)
+            datePickerView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            datePickerView.bottomAnchor.constraint(equalTo: formView.bottomAnchor, constant: -45),
+            
+            separatorLine.topAnchor.constraint(equalTo: datePickerView.bottomAnchor),
+            separatorLine.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            separatorLine.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            separatorLine.heightAnchor.constraint(equalToConstant: 1),
+            
+            verticalSeparatorLine.centerXAnchor.constraint(equalTo: formView.centerXAnchor),
+            verticalSeparatorLine.topAnchor.constraint(equalTo: separatorLine.bottomAnchor),
+            verticalSeparatorLine.bottomAnchor.constraint(equalTo: formView.bottomAnchor),
+            verticalSeparatorLine.widthAnchor.constraint(equalToConstant: 1),
+            
+            cancelButton.centerYAnchor.constraint(equalTo: verticalSeparatorLine.centerYAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            cancelButton.trailingAnchor.constraint(equalTo: verticalSeparatorLine.leadingAnchor),
+            
+            submitButton.centerYAnchor.constraint(equalTo: verticalSeparatorLine.centerYAnchor),
+            submitButton.leadingAnchor.constraint(equalTo: verticalSeparatorLine.trailingAnchor),
+            submitButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            
         ])
     }
     
@@ -82,6 +131,12 @@ class DatePickerViewController: UIViewController {
             self.dismiss(animated: false)
             self.removeFromParent()
         }
+    }
+    
+    @objc func submit() -> Date {
+        let date = datePickerView.getDate()
+        hide()
+        return date
     }
     
     private lazy var tapGestureRecognizer: UITapGestureRecognizer = {

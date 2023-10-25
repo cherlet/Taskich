@@ -21,15 +21,14 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
     }()
     private let previousButton: UIButton = {
         let button = UIButton()
-        button.setTitle("<", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(.gray, for: .disabled)
+        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.tintColor = .black
         return button
     }()
     private let nextButton: UIButton = {
         let button = UIButton()
-        button.setTitle(">", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        button.tintColor = .black
         return button
     }()
 
@@ -265,6 +264,12 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         let displayedYearMonth = Calendar.current.dateComponents([.year, .month], from: currentDate)
         
         previousButton.isEnabled = !(displayedYearMonth.year == currentYearMonth.year && displayedYearMonth.month == currentYearMonth.month)
+        
+        if previousButton.isEnabled {
+            previousButton.tintColor = .black
+        } else {
+            previousButton.tintColor = .gray
+        }
     }
     
     private func isLittleSpace() -> Bool {
@@ -284,6 +289,13 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         }
         
         return false
+    }
+    
+    func getDate() -> Date {
+        var date = selectedDate ?? Date()
+        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
+        date = date.addingTimeInterval(TimeInterval(timeZoneSeconds))
+        return date
     }
 }
 
