@@ -22,16 +22,24 @@ class TaskPresenterViewController: UIViewController {
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
     
-    // MARK: - Model properties
     let textField = UITextField()
     var taskText: String?
-    var taskDate: Date?
-    var onTaskTextUpdate: ((String) -> Void)?
+    var taskDate: Date? {
+        didSet {
+            updateDateLabel()
+        }
+    }
+    let dateView = UIView()
+    let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
+    let dateLabel = UILabel()
+    let datePickerViewController = DatePickerViewController()
+    var onTaskTextUpdate: ((String, Date) -> Void)?
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupConstraints()
+        setupFields()
         setupForm()
         print("\(taskDate ?? Date())")
     }
@@ -65,21 +73,49 @@ class TaskPresenterViewController: UIViewController {
         formViewBottomConstraint?.isActive = true
     }
     
+    func setupFields() {
+        dateView.backgroundColor = .clear
+        dateImage.tintColor = .black
+        dateLabel.text = formattedDate(from: taskDate ?? Date())
+        
+        [dateImage, dateLabel].forEach {
+            dateView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        NSLayoutConstraint.activate([
+            dateImage.leadingAnchor.constraint(equalTo: dateView.leadingAnchor, constant: 16),
+            dateImage.centerYAnchor.constraint(equalTo: dateView.centerYAnchor),
+            
+            dateLabel.leadingAnchor.constraint(equalTo: dateImage.trailingAnchor, constant: 8),
+            dateLabel.centerYAnchor.constraint(equalTo: dateView.centerYAnchor)
+        ])
+    }
+    
     func setupForm() {
         view.backgroundColor = .clear
-        dimmedView.addGestureRecognizer(tapGestureRecognizer)
+        dimmedView.addGestureRecognizer(dismissGestureRecognizer)
+        dateView.addGestureRecognizer(dateTapGestureRecognizer)
         
         textField.text = taskText
         textField.returnKeyType = .done
         textField.delegate = self
         
-        view.addSubview(textField)
-        textField.translatesAutoresizingMaskIntoConstraints = false
+        [textField, dateView].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16)
+            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+            
+            dateView.widthAnchor.constraint(equalTo: formView.widthAnchor),
+            dateView.heightAnchor.constraint(equalToConstant: 32),
+            dateView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 32),
+            dateView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            dateView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
         ])
     }
     
@@ -113,22 +149,63 @@ class TaskPresenterViewController: UIViewController {
             self.formViewBottomConstraint?.constant = self.defaultHeight
             self.view.layoutIfNeeded()
         }
+        
+        if let taskText = textField.text, !taskText.isEmpty {
+            onTaskTextUpdate?(taskText, taskDate!)
+        }
     }
     
     
     
     // MARK: - Gesture methods
-    private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
+    private lazy var dismissGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(animateDismissView))
         return tapGesture
     }()
+    
+    private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
+        return tapGesture
+    }()
+    
+    // MARK: - Button methods
+    @objc private func dateButtonTapped() {
+        datePickerViewController.modalPresentationStyle = .overFullScreen
+        datePickerViewController.appear(sender: self)
+        datePickerViewController.onDateSelected = { selectedDate in
+            self.taskDate = selectedDate
+        }
+    }
+    
+    private func formattedDate(from date: Date) -> String {
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+        let yearOfGivenDate = calendar.component(.year, from: date)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+
+        if yearOfGivenDate > currentYear {
+            dateFormatter.dateFormat = "d MMMM yyyy"
+        } else {
+            dateFormatter.dateFormat = "d MMMM"
+        }
+
+        return dateFormatter.string(from: date)
+    }
+    
+    private func updateDateLabel() {
+        dateLabel.text = formattedDate(from: taskDate ?? Date())
+    }
 }
 
 // MARK: - Extensions
 extension TaskPresenterViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let date = datePickerViewController.get()
+        
         if let taskText = textField.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText)
+            onTaskTextUpdate?(taskText, date)
             animateDismissView()
         }
         return true

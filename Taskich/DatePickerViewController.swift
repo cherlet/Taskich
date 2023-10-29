@@ -46,6 +46,8 @@ class DatePickerViewController: UIViewController {
         return view
     }()
     
+    var onDateSelected: ((Date) -> Void)?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -133,10 +135,15 @@ class DatePickerViewController: UIViewController {
         }
     }
     
-    @objc func submit() -> Date {
+    @objc func get() -> Date {
         let date = datePickerView.getDate()
-        hide()
         return date
+    }
+    
+    @objc func submit() {
+        let date = datePickerView.getDate()
+        onDateSelected?(date)
+        hide()
     }
     
     private lazy var tapGestureRecognizer: UITapGestureRecognizer = {

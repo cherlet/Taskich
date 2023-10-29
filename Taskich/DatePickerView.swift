@@ -216,7 +216,8 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         
         days.removeAll()
         
-        let today = Date()
+        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
+        let today = Date().addingTimeInterval(TimeInterval(timeZoneSeconds))
         for day in range {
             guard let date = calendar.date(byAdding: .day, value: day - 1, to: startDate) else { continue }
             

@@ -106,7 +106,7 @@ class AddFormViewController: UIViewController {
     
     // MARK: - Button action methods
     @objc private func addButtonTapped() {
-        let date = datePickerViewController.submit()
+        let date = datePickerViewController.get()
         
         if let taskText = textField.text {
             onAddButtonTapped?(taskText, date)
@@ -166,7 +166,7 @@ class AddFormViewController: UIViewController {
 
 extension AddFormViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let date = datePickerViewController.submit()
+        let date = datePickerViewController.get()
         
         if let taskText = textField.text, !taskText.isEmpty {
             onAddButtonTapped?(taskText, date)

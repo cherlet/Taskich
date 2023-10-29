@@ -7,6 +7,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     var isEditingMode = false
     var selectedRows = Set<Int>()
     var editModeToolbar = EditModeToolbarView()
+    let datePickerViewController = DatePickerViewController()
     
     
     // MARK: - Life Cycle
@@ -195,8 +196,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         presenterViewController.taskText = tasks[indexPath.row].label
         presenterViewController.taskDate = tasks[indexPath.row].date
         
-        presenterViewController.onTaskTextUpdate = { newText in
+        presenterViewController.onTaskTextUpdate = { newText, date in
             self.tasks[indexPath.row].label = newText
+            self.tasks[indexPath.row].date = date
             self.tableView.reloadData()
         }
         
@@ -263,20 +265,31 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         cancelEditing()
     }
     
+    private func changeDateSelectedRows(with date: Date) {
+        let sortedSelectedRows = selectedRows.sorted(by: >)
+        for indexPathRow in sortedSelectedRows {
+            tasks[indexPathRow].date = date
+        }
+        cancelEditing()
+    }
+
+    
     @objc private func dateButtonTapped() {
-        let datePickerViewController = DatePickerViewController()
         datePickerViewController.modalPresentationStyle = .overFullScreen
         datePickerViewController.appear(sender: self)
+        datePickerViewController.onDateSelected = { [weak self] selectedDate in
+            self?.changeDateSelectedRows(with: selectedDate)
+        }
     }
     
     
     // MARK: - Test Methods
     private func getTestCells() {
-        tasks.append(Task(label: "Short task", date: Date(), isCompleted: false))
-        tasks.append(Task(label: "Medium length task for testing", date: Date(), isCompleted: false))
-        tasks.append(Task(label: "A longer task label for testing purposes", date: Date(), isCompleted: false))
-        tasks.append(Task(label: "This is a quite long task label for testing different lengths", date: Date(), isCompleted: false))
-        tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", date: Date(), isCompleted: false))
+        tasks.append(Task(label: "Short task", date: datePickerViewController.get(), isCompleted: false))
+        tasks.append(Task(label: "Medium length task for testing", date: datePickerViewController.get(), isCompleted: false))
+        tasks.append(Task(label: "A longer task label for testing purposes", date: datePickerViewController.get(), isCompleted: false))
+        tasks.append(Task(label: "This is a quite long task label for testing different lengths", date: datePickerViewController.get(), isCompleted: false))
+        tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", date: datePickerViewController.get(), isCompleted: false))
     }
 }
 
