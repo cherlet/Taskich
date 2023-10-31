@@ -22,7 +22,15 @@ class TaskPresenterViewController: UIViewController {
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
     
-    let textField = UITextField()
+    let textView: UITextView = {
+        let tv = UITextView()
+        tv.isScrollEnabled = false
+        tv.font = UIFont.systemFont(ofSize: 17)
+        tv.textContainer.lineFragmentPadding = 0
+        tv.textContainerInset = .zero
+        tv.returnKeyType = .done
+        return tv
+    }()
     var taskText: String?
     var taskDate: Date? {
         didSet {
@@ -96,23 +104,22 @@ class TaskPresenterViewController: UIViewController {
         dimmedView.addGestureRecognizer(dismissGestureRecognizer)
         dateView.addGestureRecognizer(dateTapGestureRecognizer)
         
-        textField.text = taskText
-        textField.returnKeyType = .done
-        textField.delegate = self
+        textView.delegate = self
+        textView.text = taskText
         
-        [textField, dateView].forEach {
+        [textView, dateView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+            textView.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
             
             dateView.widthAnchor.constraint(equalTo: formView.widthAnchor),
             dateView.heightAnchor.constraint(equalToConstant: 32),
-            dateView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            dateView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
             dateView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
             dateView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
         ])
@@ -144,12 +151,12 @@ class TaskPresenterViewController: UIViewController {
         }
         
         UIView.animate(withDuration: 0.15) {
-            self.textField.resignFirstResponder()
+            self.textView.resignFirstResponder()
             self.formViewBottomConstraint?.constant = self.defaultHeight
             self.view.layoutIfNeeded()
         }
         
-        if let taskText = textField.text, !taskText.isEmpty {
+        if let taskText = textView.text, !taskText.isEmpty {
             onTaskTextUpdate?(taskText, taskDate!)
         }
     }
@@ -183,13 +190,13 @@ class TaskPresenterViewController: UIViewController {
         
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ru_RU")
-
+        
         if yearOfGivenDate > currentYear {
             dateFormatter.dateFormat = "d MMMM yyyy"
         } else {
             dateFormatter.dateFormat = "d MMMM"
         }
-
+        
         return dateFormatter.string(from: date)
     }
     
@@ -199,15 +206,35 @@ class TaskPresenterViewController: UIViewController {
 }
 
 // MARK: - Extensions
-extension TaskPresenterViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let date = datePickerViewController.get()
-        
-        if let taskText = textField.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, date)
-            animateDismissView()
+
+extension TaskPresenterViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let size = CGSize(width: textView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        textView.constraints.forEach { (constraint) in
+            if constraint.firstAttribute == .height {
+                constraint.constant = estimatedSize.height
+            }
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
         }
         return true
     }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        let date = datePickerViewController.get()
+        
+        if let taskText = textView.text, !taskText.isEmpty {
+            onTaskTextUpdate?(taskText, date)
+            animateDismissView()
+        }
+    }
 }
+
+
 

@@ -2,42 +2,32 @@ import UIKit
 
 class EditModeToolbarView: UIStackView {
     
-    lazy var tagButton: UIButton = {
-        let button = UIButton(configuration: configureButton(title: "Тэг",
-                                                             image: "tag",
-                                                             color: .black))
-        return button
-    }()
-    
     lazy var dateButton: UIButton = {
         let button = UIButton(configuration: configureButton(title: "Дата",
                                                              image: "calendar",
-                                                             color: .black))
+                                                             color: .white))
         return button
     }()
     
     lazy var deleteButton: UIButton = {
         let button = UIButton(configuration: configureButton(title: "Удалить",
                                                              image: "trash",
-                                                             color: .red))
+                                                             color: .white))
         return button
     }()
     
     override init(frame: CGRect) {
-        
         super.init(frame: frame)
 
-        [tagButton, dateButton, deleteButton].forEach {
+        let dateButtonContainer = createButtonContainer(for: dateButton, color: UIColor.gray.withAlphaComponent(0.5))
+        let deleteButtonContainer = createButtonContainer(for: deleteButton, color: UIColor.red.withAlphaComponent(0.5))
+        
+        [dateButtonContainer, deleteButtonContainer].forEach {
             addArrangedSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        
-        backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
-        layer.cornerRadius = 8
+        backgroundColor = .clear
         axis = .horizontal
-        isLayoutMarginsRelativeArrangement = true
-        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 20)
         alignment = .center
         distribution = .equalSpacing
     }
@@ -45,23 +35,28 @@ class EditModeToolbarView: UIStackView {
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
+    
+    private func createButtonContainer(for button: UIButton, color: UIColor) -> UIView {
+        let container = UIView()
+        container.addSubview(button)
+        container.backgroundColor = color
+        container.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: container.topAnchor, constant: 4),
+            button.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -4),
+            button.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
+            button.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8)
+        ])
+        return container
+    }
 
-extension EditModeToolbarView {
     private func configureButton(title: String, image: String, color: UIColor) -> UIButton.Configuration {
         var configuration = UIButton.Configuration.plain()
-        
         configuration.image = UIImage(systemName: image)
         configuration.title = title
         configuration.baseForegroundColor = color
-        
         configuration.imagePadding = 4
-        configuration.contentInsets = NSDirectionalEdgeInsets(top: 0,
-                                                              leading: 0,
-                                                              bottom: 0,
-                                                              trailing: 0)
-        
         return configuration
     }
 }
-

@@ -5,13 +5,15 @@ protocol TaskListViewControllerDelegate: AnyObject {
 }
 
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
-    // MARK: - Model Properties
+    
     var tasks = [Task]()
     var isEditingMode = false
     var selectedRows = Set<Int>()
     var editModeToolbar = EditModeToolbarView()
     let datePickerViewController = DatePickerViewController()
     weak var delegate: TaskListViewControllerDelegate?
+    var editModeToolbarBottomConstraint: NSLayoutConstraint!
+
     
     
     // MARK: - Life Cycle
@@ -63,14 +65,15 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     private func setupEditModeToolbar() {
         view.addSubview(editModeToolbar)
         editModeToolbar.isHidden = true
+        editModeToolbarBottomConstraint = editModeToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 100)
+
         
         editModeToolbar.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            editModeToolbar.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -20),
-            editModeToolbar.heightAnchor.constraint(equalToConstant: 48),
-            
-            editModeToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -5),
-            editModeToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24)
+            editModeToolbar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            editModeToolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            editModeToolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            editModeToolbarBottomConstraint
         ])
         
         editModeToolbar.deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
@@ -231,7 +234,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
         
         isEditingMode = true
-        editModeToolbar.isHidden = false
+        showEditModeToolbar()
         setupNavigationBar()
         
         if selectedRows.contains(indexPath.row) {
@@ -245,8 +248,8 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     @objc private func cancelEditing() {
         isEditingMode = false
+        hideEditModeToolbar()
         selectedRows.removeAll()
-        editModeToolbar.isHidden = true
         setupNavigationBar()
         tableView.reloadData()
     }
@@ -282,7 +285,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         tableView.reloadData()
     }
 
-
     
     @objc private func deleteButtonTapped() {
         deleteSelectedRows()
@@ -303,6 +305,25 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         datePickerViewController.appear(sender: self)
         datePickerViewController.onDateSelected = { [weak self] selectedDate in
             self?.changeDateSelectedRows(with: selectedDate)
+        }
+    }
+    
+    
+    private func showEditModeToolbar() {
+        editModeToolbar.isHidden = false
+        editModeToolbarBottomConstraint.constant = -24
+        UIView.animate(withDuration: 0.15) {
+            self.view.layoutIfNeeded()
+        }
+
+    }
+
+    private func hideEditModeToolbar() {
+        editModeToolbarBottomConstraint.constant = 100
+        UIView.animate(withDuration: 0.15) {
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.editModeToolbar.isHidden = true
         }
     }
     

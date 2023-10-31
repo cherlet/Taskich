@@ -23,7 +23,15 @@ class AddFormViewController: UIViewController {
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
 
-    let textField = UITextField()
+    let textView: UITextView = {
+        let tv = UITextView()
+        tv.isScrollEnabled = false
+        tv.font = UIFont.systemFont(ofSize: 17)
+        tv.textContainer.lineFragmentPadding = 0
+        tv.textContainerInset = .zero
+        tv.returnKeyType = .done
+        return tv
+    }()
     let addButton = UIButton()
     let dateButton = UIButton()
     let datePickerViewController = DatePickerViewController()
@@ -70,9 +78,7 @@ class AddFormViewController: UIViewController {
         view.backgroundColor = .clear
         dimmedView.addGestureRecognizer(tapGestureRecognizer)
         
-        textField.placeholder = "Задача"
-        textField.returnKeyType = .done
-        textField.delegate = self
+        textView.delegate = self
         
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
@@ -86,20 +92,20 @@ class AddFormViewController: UIViewController {
             $0.tintColor = .black
         }
         
-        [textField, addButton, dateButton].forEach {
+        [textView, addButton, dateButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textField.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
-    
-            addButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            textView.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+            
+            addButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
             addButton.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             
-            dateButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
+            dateButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
             dateButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
         ])
     }
@@ -108,7 +114,7 @@ class AddFormViewController: UIViewController {
     @objc private func addButtonTapped() {
         let date = datePickerViewController.get()
         
-        if let taskText = textField.text {
+        if let taskText = textView.text {
             onAddButtonTapped?(taskText, date)
         }
         
@@ -133,7 +139,7 @@ class AddFormViewController: UIViewController {
         UIView.animate(withDuration: 0) {
             self.dimmedView.alpha = self.dimmedAlpha
         } completion: { _ in
-            self.textField.becomeFirstResponder()
+            self.textView.becomeFirstResponder()
             self.animatePresentForm()
         }
     }
@@ -147,7 +153,7 @@ class AddFormViewController: UIViewController {
         }
         
         UIView.animate(withDuration: 0.15) {
-            self.textField.resignFirstResponder()
+            self.textView.resignFirstResponder()
             self.formViewBottomConstraint?.constant = self.defaultHeight
             self.view.layoutIfNeeded()
         }
@@ -164,15 +170,33 @@ class AddFormViewController: UIViewController {
 
 // MARK: - Extensions
 
-extension AddFormViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let date = datePickerViewController.get()
-        
-        if let taskText = textField.text, !taskText.isEmpty {
-            onAddButtonTapped?(taskText, date)
-            animateDismissView()
+extension AddFormViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let size = CGSize(width: textView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+        textView.constraints.forEach { (constraint) in
+            if constraint.firstAttribute == .height {
+                constraint.constant = estimatedSize.height
+            }
+        }
+    }
+
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            if let taskText = textView.text, !taskText.isEmpty {
+                addButtonTapped()
+            }
+            return false
         }
         return true
     }
 }
+
+
+
+
+
+
+
+
 
