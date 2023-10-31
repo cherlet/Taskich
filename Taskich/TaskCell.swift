@@ -1,9 +1,16 @@
 import UIKit
 
+protocol TaskCellDelegate: AnyObject {
+    func archived(_ cell: TaskCell, didCompleteTask task: Task)
+    func unarchived(_ cell: TaskCell, didUnarchivedTask task: Task)
+}
+
+
 class TaskCell: UITableViewCell {
     
     // MARK: - Properties
     
+    weak var delegate: TaskCellDelegate?
     private var task: Task?
     
     private lazy var taskLabel: UILabel = {
@@ -46,6 +53,7 @@ class TaskCell: UITableViewCell {
         taskLabel.text = task.label
         updateCheckmarkButton(task.isCompleted)
         self.selectionStyle = .none
+        self.checkmarkButton.isSelected = task.isCompleted
     }
     
     // MARK: - Setup Methods
@@ -77,19 +85,29 @@ class TaskCell: UITableViewCell {
     @objc private func checkmarkButtonTapped() {
         guard var task = self.task else { return }
         task.isCompleted = !task.isCompleted
-        updateCheckmarkButton(task.isCompleted)
-        self.task = task
+        updateCheckmarkButton(task.isCompleted) { [weak self] in
+            self?.task = task
+            if task.isCompleted {
+                self?.delegate?.archived(self!, didCompleteTask: task)
+            } else {
+                self?.delegate?.unarchived(self!, didUnarchivedTask: task)
+            }
+        }
     }
-    
-    private func updateCheckmarkButton(_ isCompleted: Bool) {
+
+    private func updateCheckmarkButton(_ isCompleted: Bool, completion: (() -> Void)? = nil) {
         let imageName = isCompleted ? "square.slash.fill" : "square"
         let textColor = isCompleted ? UIColor.lightGray : UIColor.black
         let textAlpha: CGFloat = isCompleted ? 0.5 : 1.0
         
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
             self.taskLabel.textColor = textColor
             self.taskLabel.alpha = textAlpha
+        }) { _ in
+            completion?()
         }
     }
+
+
 }

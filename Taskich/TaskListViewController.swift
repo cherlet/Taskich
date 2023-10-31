@@ -1,13 +1,17 @@
 import UIKit
 
+protocol TaskListViewControllerDelegate: AnyObject {
+    func didTapMenuButton()
+}
+
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
-    
     // MARK: - Model Properties
     var tasks = [Task]()
     var isEditingMode = false
     var selectedRows = Set<Int>()
     var editModeToolbar = EditModeToolbarView()
     let datePickerViewController = DatePickerViewController()
+    weak var delegate: TaskListViewControllerDelegate?
     
     
     // MARK: - Life Cycle
@@ -33,20 +37,27 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         title = "Taskich"
         
         if isEditingMode {
-            let cancelTaskButton = UIBarButtonItem(image: UIImage(systemName: "arrow.left.circle"),
+            let cancelTaskButton = UIBarButtonItem(image: UIImage(systemName: "arrow.left"),
                                                    style: .plain,
                                                    target: self,
                                                    action: #selector(cancelEditing))
             cancelTaskButton.tintColor = .black
             navigationItem.rightBarButtonItem = cancelTaskButton
         } else {
-            let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus.circle"),
+            let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus"),
                                                 style: .plain,
                                                 target: self,
                                                 action: #selector(addTask))
             addTaskButton.tintColor = .black
             navigationItem.rightBarButtonItem = addTaskButton
         }
+        
+        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
+                                                           style: .done,
+                                                           target: self,
+                                                           action: #selector(didTapMenuButton))
+        menuButton.tintColor = .black
+        navigationItem.leftBarButtonItem = menuButton
     }
     
     private func setupEditModeToolbar() {
@@ -76,6 +87,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TaskCell", for: indexPath) as? TaskCell else {
             fatalError()
         }
+        cell.delegate = self
         
         // Swipe gesture
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(leftSwipeGestureRecognizer(_:)))
@@ -189,6 +201,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
     }
     
+    @objc private func didTapMenuButton() {
+        delegate?.didTapMenuButton()
+    }
+    
     private func presentTask(at indexPath: IndexPath) {
         let presenterViewController = TaskPresenterViewController()
         presenterViewController.modalPresentationStyle = .overCurrentContext
@@ -254,11 +270,19 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     private func deleteSelectedRows() {
         let sortedSelectedRows = selectedRows.sorted(by: >)
         for indexPathRow in sortedSelectedRows {
-            tasks.remove(at: indexPathRow)
+            let deletedTask = tasks.remove(at: indexPathRow)
+            
+            if let navigationController = parent as? UINavigationController,
+               let containerVC = navigationController.parent as? ContainerViewController {
+                containerVC.addTaskToTrash(task: deletedTask)
+            }
         }
+        
         selectedRows.removeAll()
         tableView.reloadData()
     }
+
+
     
     @objc private func deleteButtonTapped() {
         deleteSelectedRows()
@@ -282,6 +306,13 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
     }
     
+    func appendTask(task: Task) {
+        var unarchivedTask = task
+        unarchivedTask.isCompleted = false
+        tasks.append(unarchivedTask)
+        tableView.reloadData()
+    }
+    
     
     // MARK: - Test Methods
     private func getTestCells() {
@@ -292,5 +323,29 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", date: datePickerViewController.get(), isCompleted: false))
     }
 }
+
+extension TaskListViewController: TaskCellDelegate {
+    func archived(_ cell: TaskCell, didCompleteTask task: Task) {
+        if let index = tasks.firstIndex(where: { $0.label == task.label && $0.date == task.date }) {
+            let completedTask = tasks.remove(at: index)
+            
+            if let navigationController = parent as? UINavigationController,
+               let containerVC = navigationController.parent as? ContainerViewController {
+                containerVC.addTaskToArchive(task: completedTask)
+            }
+            
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            tableView.endUpdates()
+        }
+    }
+    
+    func unarchived(_ cell: TaskCell, didUnarchivedTask task: Task) {
+        //
+    }
+}
+
+
+
 
 

@@ -41,7 +41,6 @@ class TaskPresenterViewController: UIViewController {
         setupConstraints()
         setupFields()
         setupForm()
-        print("\(taskDate ?? Date())")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -113,7 +112,7 @@ class TaskPresenterViewController: UIViewController {
             
             dateView.widthAnchor.constraint(equalTo: formView.widthAnchor),
             dateView.heightAnchor.constraint(equalToConstant: 32),
-            dateView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 32),
+            dateView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 16),
             dateView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
             dateView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
         ])
