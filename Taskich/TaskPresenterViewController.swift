@@ -85,6 +85,7 @@ class TaskPresenterViewController: UIViewController {
         dateImage.tintColor = .black
         dateLabel.text = formattedDate(from: taskDate ?? Date())
         
+        
         [dateImage, dateLabel].forEach {
             dateView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false

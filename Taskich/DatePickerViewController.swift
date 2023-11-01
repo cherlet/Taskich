@@ -3,6 +3,7 @@ import UIKit
 class DatePickerViewController: UIViewController {
     
     private let datePickerView = DatePickerView()
+    var onDismiss: (() -> Void)?
     
     private lazy var formView: UIView = {
         let view = UIView()
@@ -47,7 +48,7 @@ class DatePickerViewController: UIViewController {
     }()
     
     var onDateSelected: ((Date) -> Void)?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -131,6 +132,7 @@ class DatePickerViewController: UIViewController {
             self.formView.alpha = 0
         } completion: { _ in
             self.dismiss(animated: false)
+            self.onDismiss?()
             self.removeFromParent()
         }
     }

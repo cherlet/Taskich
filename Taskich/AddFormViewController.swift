@@ -18,10 +18,27 @@ class AddFormViewController: UIViewController {
         return view
     }()
     
-    private let defaultHeight: CGFloat = 500
+    private lazy var buttonsStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [dateView, addButton])
+        stack.backgroundColor = .white
+        stack.axis = .horizontal
+        stack.distribution = .equalCentering
+        stack.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        stack.isLayoutMarginsRelativeArrangement = true
+        return stack
+    }()
+    
+    private let separatorLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        return view
+    }()
+    
+    private let defaultHeight: CGFloat = 200
     private let dimmedAlpha: CGFloat = 0.6
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
+    
 
     let textView: UITextView = {
         let tv = UITextView()
@@ -32,8 +49,16 @@ class AddFormViewController: UIViewController {
         tv.returnKeyType = .done
         return tv
     }()
+    
     let addButton = UIButton()
-    let dateButton = UIButton()
+    let dateView = UIView()
+    let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
+    var taskDate: Date? {
+        didSet {
+            updateDateLabel()
+        }
+    }
+    let dateLabel = UILabel()
     let datePickerViewController = DatePickerViewController()
     var onAddButtonTapped: ((String, Date) -> Void)?
     
@@ -41,7 +66,8 @@ class AddFormViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupConstraints()
+        setupView()
+        setupFields()
         setupForm()
     }
     
@@ -50,8 +76,22 @@ class AddFormViewController: UIViewController {
         animateDimmedView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     // MARK: - Setup methods
-    private func setupConstraints() {
+    private func setupView() {
+        dimmedView.addGestureRecognizer(tapGestureRecognizer)
+        
         [dimmedView, formView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -76,37 +116,61 @@ class AddFormViewController: UIViewController {
     
     private func setupForm() {
         view.backgroundColor = .clear
-        dimmedView.addGestureRecognizer(tapGestureRecognizer)
         
+        formView.addSubview(textView)
+        textView.translatesAutoresizingMaskIntoConstraints = false
         textView.delegate = self
         
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        view.addSubview(buttonsStackView)
+        buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let configuration = UIImage.SymbolConfiguration(pointSize: 24)
-        addButton.setImage(UIImage(systemName: "arrow.up.circle", withConfiguration: configuration), for: .normal)
-        dateButton.setImage(UIImage(systemName: "calendar", withConfiguration: configuration), for: .normal)
-        
-        [addButton, dateButton].forEach {
-            $0.imageView?.contentMode = .scaleAspectFit
-            $0.tintColor = .black
-        }
-        
-        [textView, addButton, dateButton].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        view.addSubview(separatorLine)
+        separatorLine.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             textView.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
             
-            addButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
-            addButton.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
+            separatorLine.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
+            separatorLine.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            separatorLine.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            separatorLine.heightAnchor.constraint(equalToConstant: 0.5),
             
-            dateButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
-            dateButton.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
+            buttonsStackView.bottomAnchor.constraint(equalTo: formView.safeAreaLayoutGuide.bottomAnchor),
+            buttonsStackView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            buttonsStackView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            buttonsStackView.heightAnchor.constraint(equalToConstant: 44)
+        ])
+    }
+    
+    func setupFields() {
+        dateView.backgroundColor = .clear
+        dateImage.tintColor = .black
+        dateLabel.text = formattedDate(from: taskDate ?? Date())
+        dateView.addGestureRecognizer(dateTapGestureRecognizer)
+        
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        addButton.tintColor = .black
+        if let resizedImage = UIImage(systemName: "arrow.up.circle.fill")?.resize(to: CGSize(width: 28, height: 28)) {
+            addButton.setImage(resizedImage, for: .normal)
+        }
+
+        
+        
+        [dateImage, dateLabel].forEach {
+            dateView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        NSLayoutConstraint.activate([
+            dateImage.leadingAnchor.constraint(equalTo: dateView.leadingAnchor),
+            dateImage.centerYAnchor.constraint(equalTo: dateView.centerYAnchor),
+            
+            dateLabel.leadingAnchor.constraint(equalTo: dateImage.trailingAnchor, constant: 8),
+            dateLabel.centerYAnchor.constraint(equalTo: dateView.centerYAnchor),
+            
+            dateView.widthAnchor.constraint(equalToConstant: 100)
         ])
     }
     
@@ -121,10 +185,23 @@ class AddFormViewController: UIViewController {
         animateDismissView()
     }
     
+    private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
+        return tapGesture
+    }()
+    
     @objc private func dateButtonTapped() {
+        textView.resignFirstResponder()
         datePickerViewController.modalPresentationStyle = .overFullScreen
+        datePickerViewController.onDismiss = { [weak self] in
+            self?.textView.becomeFirstResponder()
+        }
+        datePickerViewController.onDateSelected = { selectedDate in
+            self.taskDate = selectedDate
+        }
         datePickerViewController.appear(sender: self)
     }
+
     
     // MARK: - Animate methods
     private func animatePresentForm() {
@@ -157,6 +234,43 @@ class AddFormViewController: UIViewController {
             self.formViewBottomConstraint?.constant = self.defaultHeight
             self.view.layoutIfNeeded()
         }
+    }
+    
+    @objc func keyboardWillShow(notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            formViewBottomConstraint?.constant = -keyboardSize.height
+            UIView.animate(withDuration: 0.15) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        formViewBottomConstraint?.constant = 0
+        UIView.animate(withDuration: 0.15) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    private func formattedDate(from date: Date) -> String {
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+        let yearOfGivenDate = calendar.component(.year, from: date)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        
+        if yearOfGivenDate > currentYear {
+            dateFormatter.dateFormat = "d MMMM yyyy"
+        } else {
+            dateFormatter.dateFormat = "d MMMM"
+        }
+        
+        return dateFormatter.string(from: date)
+    }
+    
+    private func updateDateLabel() {
+        dateLabel.text = formattedDate(from: taskDate ?? Date())
     }
     
     
@@ -192,11 +306,12 @@ extension AddFormViewController: UITextViewDelegate {
     }
 }
 
-
-
-
-
-
-
-
-
+extension UIImage {
+    func resize(to newSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resizedImage
+    }
+}

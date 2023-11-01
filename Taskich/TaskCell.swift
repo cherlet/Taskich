@@ -65,9 +65,9 @@ class TaskCell: UITableViewCell {
         }
         
         NSLayoutConstraint.activate([
-            selectedBackground.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -20),
             selectedBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
-            selectedBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -5),
+            selectedBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            selectedBackground.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             selectedBackground.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
             checkmarkButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
@@ -100,7 +100,7 @@ class TaskCell: UITableViewCell {
         let textColor = isCompleted ? UIColor.lightGray : UIColor.black
         let textAlpha: CGFloat = isCompleted ? 0.5 : 1.0
         
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: 0.15, animations: {
             self.checkmarkButton.setImage(UIImage(systemName: imageName), for: .normal)
             self.taskLabel.textColor = textColor
             self.taskLabel.alpha = textAlpha

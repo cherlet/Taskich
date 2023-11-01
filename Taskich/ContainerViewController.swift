@@ -47,7 +47,7 @@ extension ContainerViewController: TaskListViewControllerDelegate {
         switch menuState {
         case .closed:
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
-                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 200
+                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 220
             } completion: { [weak self] done in
                 if done {
                     self?.menuState = .opened
