@@ -5,5 +5,3 @@ struct Task {
     var date: Date
     var isCompleted: Bool
 }
-
-

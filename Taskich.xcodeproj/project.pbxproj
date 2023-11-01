@@ -7,51 +7,51 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		070650E52AF10FFF008F8ED7 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070650E42AF10FFF008F8ED7 /* MenuViewController.swift */; };
-		070650E72AF1110F008F8ED7 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070650E62AF1110F008F8ED7 /* ContainerViewController.swift */; };
-		07380C512AE571280072BBD7 /* WeekdaysHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07380C502AE571270072BBD7 /* WeekdaysHeaderView.swift */; };
-		076ED3FD2ABF846100908C3A /* AddFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076ED3FC2ABF846100908C3A /* AddFormViewController.swift */; };
-		0792C12D2AF1824100EDC561 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0792C12C2AF1824100EDC561 /* ArchiveViewController.swift */; };
-		0792C12F2AF1827100EDC561 /* TrashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0792C12E2AF1827100EDC561 /* TrashViewController.swift */; };
-		0792C1332AF1A8C900EDC561 /* DeletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0792C1322AF1A8C900EDC561 /* DeletedTaskCell.swift */; };
-		0792F3FF2ACB2E17002D8BF3 /* EditModeToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */; };
-		07A6CC402AE07B28008A186D /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A6CC3F2AE07B28008A186D /* DatePickerViewController.swift */; };
-		07C48DD52AE198FA00DF3F80 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C48DD42AE198FA00DF3F80 /* Day.swift */; };
-		07C48DD72AE1994800DF3F80 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C48DD62AE1994800DF3F80 /* DatePickerView.swift */; };
-		07C48DD92AE199EA00DF3F80 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C48DD82AE199EA00DF3F80 /* DateCell.swift */; };
-		07DA6E7B2ABB7963002386B7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E7A2ABB7963002386B7 /* AppDelegate.swift */; };
-		07DA6E7D2ABB7963002386B7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E7C2ABB7963002386B7 /* SceneDelegate.swift */; };
-		07DA6E842ABB7967002386B7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07DA6E832ABB7967002386B7 /* Assets.xcassets */; };
-		07DA6E872ABB7967002386B7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07DA6E852ABB7967002386B7 /* LaunchScreen.storyboard */; };
-		07DA6E8F2ABB7F25002386B7 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */; };
-		07DA6E912ABB865D002386B7 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E902ABB865D002386B7 /* Task.swift */; };
-		07DA6E952ABB88D0002386B7 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA6E942ABB88D0002386B7 /* TaskCell.swift */; };
-		07E3E8972AD2B9C600B926D1 /* TaskPresenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */; };
+		0717C8802AF2E6E800D29342 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C87E2AF2E6E800D29342 /* AppDelegate.swift */; };
+		0717C8812AF2E6E800D29342 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C87F2AF2E6E800D29342 /* SceneDelegate.swift */; };
+		0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8822AF2E77F00D29342 /* ArchiveViewController.swift */; };
+		0717C88B2AF2E77F00D29342 /* DatePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8832AF2E77F00D29342 /* DatePickerViewController.swift */; };
+		0717C88C2AF2E77F00D29342 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8842AF2E77F00D29342 /* TaskListViewController.swift */; };
+		0717C88D2AF2E77F00D29342 /* TrashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8852AF2E77F00D29342 /* TrashViewController.swift */; };
+		0717C88E2AF2E77F00D29342 /* TaskPresenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8862AF2E77F00D29342 /* TaskPresenterViewController.swift */; };
+		0717C88F2AF2E77F00D29342 /* AddFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8872AF2E77F00D29342 /* AddFormViewController.swift */; };
+		0717C8902AF2E77F00D29342 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8882AF2E77F00D29342 /* ContainerViewController.swift */; };
+		0717C8912AF2E77F00D29342 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8892AF2E77F00D29342 /* MenuViewController.swift */; };
+		0717C8982AF2E86000D29342 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0717C8972AF2E86000D29342 /* Assets.xcassets */; };
+		0717C89C2AF2E8AB00D29342 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0717C89A2AF2E8AA00D29342 /* LaunchScreen.storyboard */; };
+		0717C89F2AF2E90900D29342 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C89D2AF2E90900D29342 /* Day.swift */; };
+		0717C8A02AF2E90900D29342 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C89E2AF2E90900D29342 /* Task.swift */; };
+		0717C8A52AF2E98B00D29342 /* WeekdaysHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A22AF2E98B00D29342 /* WeekdaysHeaderView.swift */; };
+		0717C8A62AF2E98B00D29342 /* DatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A32AF2E98B00D29342 /* DatePickerView.swift */; };
+		0717C8A72AF2E98B00D29342 /* EditModeToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A42AF2E98B00D29342 /* EditModeToolbarView.swift */; };
+		0717C8AB2AF2E9AE00D29342 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A82AF2E9AE00D29342 /* DateCell.swift */; };
+		0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */; };
+		0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		070650E42AF10FFF008F8ED7 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
-		070650E62AF1110F008F8ED7 /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
-		07380C502AE571270072BBD7 /* WeekdaysHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaysHeaderView.swift; sourceTree = "<group>"; };
-		076ED3FC2ABF846100908C3A /* AddFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFormViewController.swift; sourceTree = "<group>"; };
-		0792C12C2AF1824100EDC561 /* ArchiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewController.swift; sourceTree = "<group>"; };
-		0792C12E2AF1827100EDC561 /* TrashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashViewController.swift; sourceTree = "<group>"; };
-		0792C1322AF1A8C900EDC561 /* DeletedTaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedTaskCell.swift; sourceTree = "<group>"; };
-		0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditModeToolbarView.swift; sourceTree = "<group>"; };
-		07A6CC3F2AE07B28008A186D /* DatePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
-		07C48DD42AE198FA00DF3F80 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
-		07C48DD62AE1994800DF3F80 /* DatePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerView.swift; sourceTree = "<group>"; };
-		07C48DD82AE199EA00DF3F80 /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
+		0717C87E2AF2E6E800D29342 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0717C87F2AF2E6E800D29342 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		0717C8822AF2E77F00D29342 /* ArchiveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchiveViewController.swift; sourceTree = "<group>"; };
+		0717C8832AF2E77F00D29342 /* DatePickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatePickerViewController.swift; sourceTree = "<group>"; };
+		0717C8842AF2E77F00D29342 /* TaskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
+		0717C8852AF2E77F00D29342 /* TrashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrashViewController.swift; sourceTree = "<group>"; };
+		0717C8862AF2E77F00D29342 /* TaskPresenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPresenterViewController.swift; sourceTree = "<group>"; };
+		0717C8872AF2E77F00D29342 /* AddFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFormViewController.swift; sourceTree = "<group>"; };
+		0717C8882AF2E77F00D29342 /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
+		0717C8892AF2E77F00D29342 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		0717C8972AF2E86000D29342 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0717C89B2AF2E8AA00D29342 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		0717C89D2AF2E90900D29342 /* Day.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
+		0717C89E2AF2E90900D29342 /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		0717C8A22AF2E98B00D29342 /* WeekdaysHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeekdaysHeaderView.swift; sourceTree = "<group>"; };
+		0717C8A32AF2E98B00D29342 /* DatePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatePickerView.swift; sourceTree = "<group>"; };
+		0717C8A42AF2E98B00D29342 /* EditModeToolbarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditModeToolbarView.swift; sourceTree = "<group>"; };
+		0717C8A82AF2E9AE00D29342 /* DateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
+		0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeletedTaskCell.swift; sourceTree = "<group>"; };
+		0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		07DA6E772ABB7963002386B7 /* Taskich.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taskich.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		07DA6E7A2ABB7963002386B7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		07DA6E7C2ABB7963002386B7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		07DA6E832ABB7967002386B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		07DA6E862ABB7967002386B7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		07DA6E882ABB7967002386B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
-		07DA6E902ABB865D002386B7 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		07DA6E942ABB88D0002386B7 /* TaskCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
-		07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +65,85 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0717C8792AF2E67600D29342 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0717C87E2AF2E6E800D29342 /* AppDelegate.swift */,
+				0717C87F2AF2E6E800D29342 /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		0717C87A2AF2E68100D29342 /* Recources */ = {
+			isa = PBXGroup;
+			children = (
+				0717C8992AF2E86500D29342 /* Storyboards */,
+				0717C8962AF2E81700D29342 /* Assets */,
+			);
+			path = Recources;
+			sourceTree = "<group>";
+		};
+		0717C87B2AF2E68300D29342 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				0717C8872AF2E77F00D29342 /* AddFormViewController.swift */,
+				0717C8822AF2E77F00D29342 /* ArchiveViewController.swift */,
+				0717C8882AF2E77F00D29342 /* ContainerViewController.swift */,
+				0717C8832AF2E77F00D29342 /* DatePickerViewController.swift */,
+				0717C8892AF2E77F00D29342 /* MenuViewController.swift */,
+				0717C8842AF2E77F00D29342 /* TaskListViewController.swift */,
+				0717C8862AF2E77F00D29342 /* TaskPresenterViewController.swift */,
+				0717C8852AF2E77F00D29342 /* TrashViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		0717C87C2AF2E68500D29342 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0717C89D2AF2E90900D29342 /* Day.swift */,
+				0717C89E2AF2E90900D29342 /* Task.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0717C87D2AF2E68700D29342 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0717C8A32AF2E98B00D29342 /* DatePickerView.swift */,
+				0717C8A42AF2E98B00D29342 /* EditModeToolbarView.swift */,
+				0717C8A22AF2E98B00D29342 /* WeekdaysHeaderView.swift */,
+				0717C8A12AF2E96400D29342 /* Cells */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		0717C8962AF2E81700D29342 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				0717C8972AF2E86000D29342 /* Assets.xcassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		0717C8992AF2E86500D29342 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				0717C89A2AF2E8AA00D29342 /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		0717C8A12AF2E96400D29342 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				0717C8A82AF2E9AE00D29342 /* DateCell.swift */,
+				0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */,
+				0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		07DA6E6E2ABB7962002386B7 = {
 			isa = PBXGroup;
 			children = (
@@ -84,26 +163,11 @@
 		07DA6E792ABB7963002386B7 /* Taskich */ = {
 			isa = PBXGroup;
 			children = (
-				07DA6E7A2ABB7963002386B7 /* AppDelegate.swift */,
-				07DA6E7C2ABB7963002386B7 /* SceneDelegate.swift */,
-				07DA6E902ABB865D002386B7 /* Task.swift */,
-				07DA6E942ABB88D0002386B7 /* TaskCell.swift */,
-				070650E62AF1110F008F8ED7 /* ContainerViewController.swift */,
-				0792C12C2AF1824100EDC561 /* ArchiveViewController.swift */,
-				0792C12E2AF1827100EDC561 /* TrashViewController.swift */,
-				07DA6E8E2ABB7F25002386B7 /* TaskListViewController.swift */,
-				076ED3FC2ABF846100908C3A /* AddFormViewController.swift */,
-				070650E42AF10FFF008F8ED7 /* MenuViewController.swift */,
-				07E3E8962AD2B9C600B926D1 /* TaskPresenterViewController.swift */,
-				0792F3FE2ACB2E17002D8BF3 /* EditModeToolbarView.swift */,
-				0792C1322AF1A8C900EDC561 /* DeletedTaskCell.swift */,
-				07C48DD42AE198FA00DF3F80 /* Day.swift */,
-				07C48DD62AE1994800DF3F80 /* DatePickerView.swift */,
-				07A6CC3F2AE07B28008A186D /* DatePickerViewController.swift */,
-				07380C502AE571270072BBD7 /* WeekdaysHeaderView.swift */,
-				07C48DD82AE199EA00DF3F80 /* DateCell.swift */,
-				07DA6E832ABB7967002386B7 /* Assets.xcassets */,
-				07DA6E852ABB7967002386B7 /* LaunchScreen.storyboard */,
+				0717C87D2AF2E68700D29342 /* View */,
+				0717C87C2AF2E68500D29342 /* Model */,
+				0717C87B2AF2E68300D29342 /* Controller */,
+				0717C87A2AF2E68100D29342 /* Recources */,
+				0717C8792AF2E67600D29342 /* App */,
 				07DA6E882ABB7967002386B7 /* Info.plist */,
 			);
 			path = Taskich;
@@ -171,8 +235,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07DA6E872ABB7967002386B7 /* LaunchScreen.storyboard in Resources */,
-				07DA6E842ABB7967002386B7 /* Assets.xcassets in Resources */,
+				0717C8982AF2E86000D29342 /* Assets.xcassets in Resources */,
+				0717C89C2AF2E8AB00D29342 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,34 +247,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07DA6E8F2ABB7F25002386B7 /* TaskListViewController.swift in Sources */,
-				070650E52AF10FFF008F8ED7 /* MenuViewController.swift in Sources */,
-				07DA6E912ABB865D002386B7 /* Task.swift in Sources */,
-				07A6CC402AE07B28008A186D /* DatePickerViewController.swift in Sources */,
-				07C48DD72AE1994800DF3F80 /* DatePickerView.swift in Sources */,
-				07E3E8972AD2B9C600B926D1 /* TaskPresenterViewController.swift in Sources */,
-				0792C1332AF1A8C900EDC561 /* DeletedTaskCell.swift in Sources */,
-				076ED3FD2ABF846100908C3A /* AddFormViewController.swift in Sources */,
-				0792C12D2AF1824100EDC561 /* ArchiveViewController.swift in Sources */,
-				0792F3FF2ACB2E17002D8BF3 /* EditModeToolbarView.swift in Sources */,
-				070650E72AF1110F008F8ED7 /* ContainerViewController.swift in Sources */,
-				0792C12F2AF1827100EDC561 /* TrashViewController.swift in Sources */,
-				07380C512AE571280072BBD7 /* WeekdaysHeaderView.swift in Sources */,
-				07C48DD92AE199EA00DF3F80 /* DateCell.swift in Sources */,
-				07DA6E7B2ABB7963002386B7 /* AppDelegate.swift in Sources */,
-				07DA6E952ABB88D0002386B7 /* TaskCell.swift in Sources */,
-				07C48DD52AE198FA00DF3F80 /* Day.swift in Sources */,
-				07DA6E7D2ABB7963002386B7 /* SceneDelegate.swift in Sources */,
+				0717C88D2AF2E77F00D29342 /* TrashViewController.swift in Sources */,
+				0717C88F2AF2E77F00D29342 /* AddFormViewController.swift in Sources */,
+				0717C88C2AF2E77F00D29342 /* TaskListViewController.swift in Sources */,
+				0717C8A72AF2E98B00D29342 /* EditModeToolbarView.swift in Sources */,
+				0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */,
+				0717C8A52AF2E98B00D29342 /* WeekdaysHeaderView.swift in Sources */,
+				0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */,
+				0717C88E2AF2E77F00D29342 /* TaskPresenterViewController.swift in Sources */,
+				0717C8AB2AF2E9AE00D29342 /* DateCell.swift in Sources */,
+				0717C8812AF2E6E800D29342 /* SceneDelegate.swift in Sources */,
+				0717C8902AF2E77F00D29342 /* ContainerViewController.swift in Sources */,
+				0717C8A62AF2E98B00D29342 /* DatePickerView.swift in Sources */,
+				0717C89F2AF2E90900D29342 /* Day.swift in Sources */,
+				0717C8912AF2E77F00D29342 /* MenuViewController.swift in Sources */,
+				0717C88B2AF2E77F00D29342 /* DatePickerViewController.swift in Sources */,
+				0717C8A02AF2E90900D29342 /* Task.swift in Sources */,
+				0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */,
+				0717C8802AF2E6E800D29342 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		07DA6E852ABB7967002386B7 /* LaunchScreen.storyboard */ = {
+		0717C89A2AF2E8AA00D29342 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				07DA6E862ABB7967002386B7 /* Base */,
+				0717C89B2AF2E8AA00D29342 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
