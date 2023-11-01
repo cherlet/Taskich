@@ -2,32 +2,32 @@ import UIKit
 
 class ContainerViewController: UIViewController {
     
+    // MARK: - Properties
     enum MenuState {
         case opened
         case closed
     }
     
     private var menuState: MenuState = .closed
-    
     let menuViewController = MenuViewController()
     let taskListViewController = TaskListViewController()
     let archiveViewController = ArchiveViewController()
     let trashViewController = TrashViewController()
     var navigationViewController: UINavigationController?
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         addChildViewController()
     }
     
+    // MARK: - Setup methods
     private func addChildViewController() {
-        // Menu
         menuViewController.delegate = self
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
         
-        // Task list
         taskListViewController.delegate = self
         let navigationViewController = UINavigationController(rootViewController: taskListViewController)
         addChild(navigationViewController)
@@ -35,9 +35,26 @@ class ContainerViewController: UIViewController {
         navigationViewController.didMove(toParent: self)
         self.navigationViewController = navigationViewController
     }
-
+    
+    // MARK: - Datasource methods
+    func addTaskToArchive(task: Task) {
+        archiveViewController.addTask(task: task)
+    }
+    
+    func addTaskToTrash(task: Task) {
+        trashViewController.addTask(task: task)
+    }
+    
+    func unarchivedTask(task: Task) {
+        taskListViewController.appendTask(task: task)
+    }
+    
+    func returnDeletedTask(task: Task) {
+        taskListViewController.appendTask(task: task)
+    }
 }
 
+// MARK: - TaskListVC Delegate
 extension ContainerViewController: TaskListViewControllerDelegate {
     @objc func didTapMenuButton() {
         toggleMenu(completion: nil)
@@ -68,6 +85,7 @@ extension ContainerViewController: TaskListViewControllerDelegate {
     }
 }
 
+// MARK: - MenuVC Delegate
 extension ContainerViewController: MenuViewControllerDelegate {
     func didSelect(menuItem: MenuViewController.MenuOptions) {
         toggleMenu(completion: nil)
@@ -91,23 +109,3 @@ extension ContainerViewController: MenuViewControllerDelegate {
         vc.navigationItem.leftBarButtonItem = barItem
     }
 }
-
-extension ContainerViewController {
-    func addTaskToArchive(task: Task) {
-        archiveViewController.addTask(task: task)
-    }
-    
-    func addTaskToTrash(task: Task) {
-        trashViewController.addTask(task: task)
-    }
-    
-    func unarchivedTask(task: Task) {
-        taskListViewController.appendTask(task: task)
-    }
-    
-    func returnDeletedTask(task: Task) {
-        taskListViewController.appendTask(task: task)
-    }
-}
-
-

@@ -2,6 +2,7 @@ import UIKit
 
 class EditModeToolbarView: UIStackView {
     
+    // MARK: - Properties
     lazy var dateButton: UIButton = {
         let button = UIButton(configuration: configureButton(title: "Дата",
                                                              image: "calendar",
@@ -16,9 +17,17 @@ class EditModeToolbarView: UIStackView {
         return button
     }()
     
+    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        setupView()
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
         let dateButtonContainer = createButtonContainer(for: dateButton, color: UIColor.gray.withAlphaComponent(0.5))
         let deleteButtonContainer = createButtonContainer(for: deleteButton, color: UIColor.red.withAlphaComponent(0.5))
         
@@ -32,10 +41,7 @@ class EditModeToolbarView: UIStackView {
         distribution = .equalSpacing
     }
     
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    // MARK: - Helper Methods
     private func createButtonContainer(for button: UIButton, color: UIColor) -> UIView {
         let container = UIView()
         container.addSubview(button)

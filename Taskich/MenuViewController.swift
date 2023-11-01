@@ -4,10 +4,8 @@ protocol MenuViewControllerDelegate: AnyObject {
     func didSelect(menuItem: MenuViewController.MenuOptions)
 }
 
-class MenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
-    weak var delegate: MenuViewControllerDelegate?
-    
+class MenuViewController: UIViewController {
+    // MARK: - Properties
     enum MenuOptions: String, CaseIterable {
         case tasks = "Задачи"
         case archive = "Архив"
@@ -24,6 +22,17 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+
+    weak var delegate: MenuViewControllerDelegate?
+    
+    private let tableView: UITableView = {
+        let table = UITableView()
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.separatorStyle = .none
+        return table
+    }()
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +41,7 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
         setupView()
     }
     
+    // MARK: - Setup Methods
     private func setupView() {
         view.backgroundColor = .white
         
@@ -45,16 +55,19 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    
-    private let tableView: UITableView = {
-        let table = UITableView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        table.separatorStyle = .none
-        return table
-    }()
-    
-    // MARK: - Table
-    
+}
+
+// MARK: - UITableViewDelegate
+extension MenuViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let item = MenuOptions.allCases[indexPath.row]
+        delegate?.didSelect(menuItem: item)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension MenuViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MenuOptions.allCases.count
     }
@@ -66,11 +79,5 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.imageView?.image = UIImage(systemName: MenuOptions.allCases[indexPath.row].imageName)
         cell.imageView?.tintColor = .black
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = MenuOptions.allCases[indexPath.row]
-        delegate?.didSelect(menuItem: item)
     }
 }

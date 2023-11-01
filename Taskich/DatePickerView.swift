@@ -2,12 +2,14 @@ import UIKit
 
 class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    // MARK: - Properties
     private var days: [Day] = []
     private let collectionView: UICollectionView
     private let layout: UICollectionViewFlowLayout
     private var selectedDate: Date?
     private var currentDate: Date = Date()
     
+    // MARK: - UI Components
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -33,7 +35,7 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
     }()
 
     
-    
+    // MARK: - Initializers
     override init(frame: CGRect) {
         
         layout = UICollectionViewFlowLayout()
@@ -55,6 +57,7 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup methods
     private func setupCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -94,6 +97,53 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+    
+    private func setupMonth() {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: currentDate)
+        
+        guard let startDate = calendar.date(from: components),
+              let range = calendar.range(of: .day, in: .month, for: startDate)
+        else {
+            return
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        let monthName = dateFormatter.standaloneMonthSymbols[components.month! - 1].capitalized
+        if components.year == Calendar.current.component(.year, from: Date()) {
+            monthLabel.text = monthName
+        } else {
+            monthLabel.text = "\(monthName) \(components.year!)"
+        }
+        
+        days.removeAll()
+        
+        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
+        let today = Date().addingTimeInterval(TimeInterval(timeZoneSeconds))
+        for day in range {
+            guard let date = calendar.date(byAdding: .day, value: day - 1, to: startDate) else { continue }
+            
+            let isCurrent = calendar.isDate(date, inSameDayAs: today)
+            let isSelected: Bool
+            if selectedDate == nil {
+                isSelected = isCurrent
+            } else {
+                isSelected = calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)
+            }
+            let isPast: Bool
+            if calendar.compare(date, to: today, toGranularity: .day) == .orderedAscending {
+                isPast = true
+            } else {
+                isPast = false
+            }
+            
+            let state = State(isSelected: isSelected, isCurrent: isCurrent, isPast: isPast)
+            let dayItem = Day(date: date, state: state)
+            
+            days.append(dayItem)
+        }
     }
     
     private func setupCalendar() {
@@ -167,8 +217,18 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         collectionView.reloadData()
     }
     
+    // MARK: - Action methods
+    @objc private func didTapPreviousButton() {
+        moveToPreviousMonth()
+        updateButtonsState()
+    }
+
+    @objc private func didTapNextButton() {
+        moveToNextMonth()
+        updateButtonsState()
+    }
     
-    // MARK: - Other methods
+    // MARK: - Helper methods
     
     private func emptyDaysAtStart() -> Int {
         let components = Calendar.current.dateComponents([.year, .month], from: currentDate)
@@ -195,69 +255,12 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         updateButtonsState()
     }
     
-    private func setupMonth() {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: currentDate)
-        
-        guard let startDate = calendar.date(from: components),
-              let range = calendar.range(of: .day, in: .month, for: startDate)
-        else {
-            return
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ru_RU")
-        let monthName = dateFormatter.standaloneMonthSymbols[components.month! - 1].capitalized
-        if components.year == Calendar.current.component(.year, from: Date()) {
-            monthLabel.text = monthName
-        } else {
-            monthLabel.text = "\(monthName) \(components.year!)"
-        }
-        
-        days.removeAll()
-        
-        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
-        let today = Date().addingTimeInterval(TimeInterval(timeZoneSeconds))
-        for day in range {
-            guard let date = calendar.date(byAdding: .day, value: day - 1, to: startDate) else { continue }
-            
-            let isCurrent = calendar.isDate(date, inSameDayAs: today)
-            let isSelected: Bool
-            if selectedDate == nil {
-                isSelected = isCurrent
-            } else {
-                isSelected = calendar.isDate(date, equalTo: selectedDate!, toGranularity: .day)
-            }
-            let isPast: Bool
-            if calendar.compare(date, to: today, toGranularity: .day) == .orderedAscending {
-                isPast = true
-            } else {
-                isPast = false
-            }
-            
-            let state = State(isSelected: isSelected, isCurrent: isCurrent, isPast: isPast)
-            let dayItem = Day(date: date, state: state)
-            
-            days.append(dayItem)
-        }
-    }
-    
     private func moveToNextMonth() {
         adjustCurrentDate(by: 1)
     }
     
     private func moveToPreviousMonth() {
         adjustCurrentDate(by: -1)
-    }
-    
-    @objc private func didTapPreviousButton() {
-        moveToPreviousMonth()
-        updateButtonsState()
-    }
-
-    @objc private func didTapNextButton() {
-        moveToNextMonth()
-        updateButtonsState()
     }
 
     private func updateButtonsState() {

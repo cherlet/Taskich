@@ -2,7 +2,28 @@ import UIKit
 
 class AddFormViewController: UIViewController {
     
-    // MARK: - View Properties
+    // MARK: - Constants
+    private let defaultHeight: CGFloat = 200
+    private let dimmedAlpha: CGFloat = 0.6
+    
+    // MARK: - Properties
+    let addButton = UIButton()
+    var onAddButtonTapped: ((String, Date) -> Void)?
+    
+    let datePickerViewController = DatePickerViewController()
+    let dateView = UIView()
+    let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
+    let dateLabel = UILabel()
+    var taskDate: Date? {
+        didSet {
+            updateDateLabel()
+        }
+    }
+    
+    private var formViewHeightConstraint: NSLayoutConstraint?
+    private var formViewBottomConstraint: NSLayoutConstraint?
+    
+    // MARK: - UI Components
     private lazy var formView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -28,16 +49,11 @@ class AddFormViewController: UIViewController {
         return stack
     }()
     
-    private let separatorLine: UIView = {
+    private lazy var separatorLine: UIView = {
         let view = UIView()
         view.backgroundColor = .gray
         return view
     }()
-    
-    private let defaultHeight: CGFloat = 200
-    private let dimmedAlpha: CGFloat = 0.6
-    private var formViewHeightConstraint: NSLayoutConstraint?
-    private var formViewBottomConstraint: NSLayoutConstraint?
     
 
     let textView: UITextView = {
@@ -50,20 +66,8 @@ class AddFormViewController: UIViewController {
         return tv
     }()
     
-    let addButton = UIButton()
-    let dateView = UIView()
-    let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
-    var taskDate: Date? {
-        didSet {
-            updateDateLabel()
-        }
-    }
-    let dateLabel = UILabel()
-    let datePickerViewController = DatePickerViewController()
-    var onAddButtonTapped: ((String, Date) -> Void)?
     
-    
-    // MARK: - Life cycle
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -91,6 +95,8 @@ class AddFormViewController: UIViewController {
     // MARK: - Setup methods
     private func setupView() {
         dimmedView.addGestureRecognizer(tapGestureRecognizer)
+        formView.addGestureRecognizer(swipeDownGestureRecognizer)
+
         
         [dimmedView, formView].forEach {
             view.addSubview($0)
@@ -144,7 +150,7 @@ class AddFormViewController: UIViewController {
         ])
     }
     
-    func setupFields() {
+    private func setupFields() {
         dateView.backgroundColor = .clear
         dateImage.tintColor = .black
         dateLabel.text = formattedDate(from: taskDate ?? Date())
@@ -174,7 +180,7 @@ class AddFormViewController: UIViewController {
         ])
     }
     
-    // MARK: - Button action methods
+    // MARK: - Action methods
     @objc private func addButtonTapped() {
         let date = datePickerViewController.get()
         
@@ -184,11 +190,6 @@ class AddFormViewController: UIViewController {
         
         animateDismissView()
     }
-    
-    private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
-        return tapGesture
-    }()
     
     @objc private func dateButtonTapped() {
         textView.resignFirstResponder()
@@ -201,23 +202,20 @@ class AddFormViewController: UIViewController {
         }
         datePickerViewController.appear(sender: self)
     }
+    
+    private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
+        return tapGesture
+    }()
 
     
-    // MARK: - Animate methods
-    private func animatePresentForm() {
-        UIView.animate(withDuration: 0.15) {
-            self.formViewBottomConstraint?.constant = 0
-            self.view.layoutIfNeeded()
-        }
-    }
-    
+    // MARK: - Animation Methods
     private func animateDimmedView() {
         dimmedView.alpha = 0
-        UIView.animate(withDuration: 0) {
+        UIView.animate(withDuration: 0.15) {
             self.dimmedView.alpha = self.dimmedAlpha
         } completion: { _ in
             self.textView.becomeFirstResponder()
-            self.animatePresentForm()
         }
     }
     
@@ -235,7 +233,8 @@ class AddFormViewController: UIViewController {
             self.view.layoutIfNeeded()
         }
     }
-    
+
+    // MARK: - Keyboard Handling
     @objc func keyboardWillShow(notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             formViewBottomConstraint?.constant = -keyboardSize.height
@@ -252,6 +251,7 @@ class AddFormViewController: UIViewController {
         }
     }
     
+    // MARK: - Helper Methods
     private func formattedDate(from date: Date) -> String {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
@@ -273,17 +273,20 @@ class AddFormViewController: UIViewController {
         dateLabel.text = formattedDate(from: taskDate ?? Date())
     }
     
-    
-    
     // MARK: - Gesture methods
     private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(animateDismissView))
         return tapGesture
     }()
+    
+    private lazy var swipeDownGestureRecognizer: UISwipeGestureRecognizer = {
+        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(animateDismissView))
+        gestureRecognizer.direction = .down
+        return gestureRecognizer
+    }()
 }
 
-// MARK: - Extensions
-
+// MARK: - UITextViewDelegate
 extension AddFormViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let size = CGSize(width: textView.frame.width, height: .infinity)
@@ -306,6 +309,7 @@ extension AddFormViewController: UITextViewDelegate {
     }
 }
 
+// MARK: - UIImage Extension
 extension UIImage {
     func resize(to newSize: CGSize) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)

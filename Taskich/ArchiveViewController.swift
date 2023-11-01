@@ -1,8 +1,17 @@
 import UIKit
 
-class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var tasks: [Task] = []
+class ArchiveViewController: UIViewController {
     
+    // MARK: - Properties
+    var tasks: [Task] = []
+    private let tableView: UITableView = {
+        let table = UITableView()
+        table.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
+        table.separatorStyle = .none
+        return table
+    }()
+    
+    // MARK: - Lifeсycle
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -10,6 +19,7 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         setupView()
     }
     
+    // MARK: - Setup Methods
     private func setupView() {
         title = "Архив"
         view.backgroundColor = .white
@@ -23,29 +33,25 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
         ])
     }
     
+    // MARK: - Task Management
     func addTask(task: Task) {
         var completedTask = task
         completedTask.isCompleted = true
         tasks.append(completedTask)
         tableView.reloadData()
     }
+}
 
-    
-    // MARK: - Tabel
-    private let tableView: UITableView = {
-        let table = UITableView()
-        table.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
-        table.separatorStyle = .none
-        return table
-    }()
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension ArchiveViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tasks.count
+        return tasks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TaskCell", for: indexPath) as? TaskCell else {
-            fatalError()
+            fatalError("Failed to dequeue a TaskCell.")
         }
         cell.configure(task: tasks[indexPath.row])
         cell.delegate = self
@@ -53,10 +59,11 @@ class ArchiveViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 }
 
+// MARK: - TaskCellDelegate
+
 extension ArchiveViewController: TaskCellDelegate {
-    func archived(_ cell: TaskCell, didCompleteTask task: Task) {
-        //
-    }
+
+    func archived(_ cell: TaskCell, didCompleteTask task: Task) {}
     
     func unarchived(_ cell: TaskCell, didUnarchivedTask task: Task) {
         if let index = tasks.firstIndex(where: { $0.label == task.label && $0.date == task.date }) {

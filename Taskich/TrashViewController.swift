@@ -1,8 +1,26 @@
 import UIKit
 
-class TrashViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var tasks: [Task] = []
+class TrashViewController: UIViewController {
+
+    // MARK: - Properties
+    private var tasks: [Task] = []
+    private let tableView: UITableView = {
+        let table = UITableView()
+        table.separatorStyle = .none
+        return table
+    }()
     
+    private lazy var deleteAllButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Очистить корзину", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .red
+        button.layer.cornerRadius = 8
+        button.addTarget(self, action: #selector(deleteAllTasks), for: .touchUpInside)
+        return button
+    }()
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(DeletedTaskCell.self, forCellReuseIdentifier: "DeletedTaskCell")
@@ -11,6 +29,7 @@ class TrashViewController: UIViewController, UITableViewDelegate, UITableViewDat
         setupView()
     }
     
+    // MARK: - Setup Methods
     private func setupView() {
         title = "Корзина"
         view.backgroundColor = .white
@@ -33,44 +52,11 @@ class TrashViewController: UIViewController, UITableViewDelegate, UITableViewDat
         ])
     }
     
-    private lazy var deleteAllButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Очистить корзину", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .red
-        button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(deleteAllTasks), for: .touchUpInside)
-        return button
-    }()
-
-
-
-    
-    // MARK: - Tabel
-    private let tableView: UITableView = {
-        let table = UITableView()
-        table.separatorStyle = .none
-        return table
-    }()
-    
+    // MARK: - Task Management
     func addTask(task: Task) {
         tasks.append(task)
         tableView.reloadData()
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tasks.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DeletedTaskCell", for: indexPath) as? DeletedTaskCell else { fatalError() }
-        
-        cell.delegate = self
-        cell.configure(task: tasks[indexPath.row])
-        return cell
-    }
-
-
     
     @objc private func deleteAllTasks() {
         let actionSheet = UIAlertController(title: nil, message: "Вы действительно хотите удалить все задачи?", preferredStyle: .actionSheet)
@@ -93,7 +79,27 @@ class TrashViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
 }
 
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension TrashViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tasks.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "DeletedTaskCell", for: indexPath) as? DeletedTaskCell else {
+            fatalError("Failed to dequeue a DeletedTaskCell.")
+        }
+        
+        cell.delegate = self
+        cell.configure(task: tasks[indexPath.row])
+        return cell
+    }
+}
+
+// MARK: - DeletedTaskCellDelegate
 extension TrashViewController: DeletedTaskCellDelegate {
+    
     func returnTask(_ cell: DeletedTaskCell, task: Task) {
         if let index = tasks.firstIndex(where: { $0.label == task.label && $0.date == task.date }) {
             let returnedTask = tasks.remove(at: index)
@@ -108,4 +114,3 @@ extension TrashViewController: DeletedTaskCellDelegate {
         }
     }
 }
-
