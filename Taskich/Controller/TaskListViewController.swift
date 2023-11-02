@@ -13,8 +13,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     let datePickerViewController = DatePickerViewController()
     weak var delegate: TaskListViewControllerDelegate?
     var editModeToolbarBottomConstraint: NSLayoutConstraint!
-
-    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -210,7 +208,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     private func presentTask(at indexPath: IndexPath) {
         let presenterViewController = TaskPresenterViewController()
-        presenterViewController.modalPresentationStyle = .overCurrentContext
+        presenterViewController.modalPresentationStyle = .formSheet
         
         presenterViewController.taskText = tasks[indexPath.row].label
         presenterViewController.taskDate = tasks[indexPath.row].date
@@ -221,7 +219,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             self.tableView.reloadData()
         }
         
-        present(presenterViewController, animated: false)
+        present(presenterViewController, animated: true)
     }
     
     // MARK: - Other Methods

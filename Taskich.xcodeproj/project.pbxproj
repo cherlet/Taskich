@@ -27,6 +27,7 @@
 		0717C8AB2AF2E9AE00D29342 /* DateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A82AF2E9AE00D29342 /* DateCell.swift */; };
 		0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */; };
 		0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */; };
+		07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		0717C8A82AF2E9AE00D29342 /* DateCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeletedTaskCell.swift; sourceTree = "<group>"; };
 		0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
+		07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterFieldView.swift; sourceTree = "<group>"; };
 		07DA6E772ABB7963002386B7 /* Taskich.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taskich.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07DA6E882ABB7967002386B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,6 +115,7 @@
 				0717C8A32AF2E98B00D29342 /* DatePickerView.swift */,
 				0717C8A42AF2E98B00D29342 /* EditModeToolbarView.swift */,
 				0717C8A22AF2E98B00D29342 /* WeekdaysHeaderView.swift */,
+				07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */,
 				0717C8A12AF2E96400D29342 /* Cells */,
 			);
 			path = View;
@@ -254,6 +257,7 @@
 				0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */,
 				0717C8A52AF2E98B00D29342 /* WeekdaysHeaderView.swift in Sources */,
 				0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */,
+				07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */,
 				0717C88E2AF2E77F00D29342 /* TaskPresenterViewController.swift in Sources */,
 				0717C8AB2AF2E9AE00D29342 /* DateCell.swift in Sources */,
 				0717C8812AF2E6E800D29342 /* SceneDelegate.swift in Sources */,

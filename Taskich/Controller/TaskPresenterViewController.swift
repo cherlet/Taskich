@@ -1,27 +1,19 @@
 import UIKit
 
 class TaskPresenterViewController: UIViewController {
-    // MARK: - View Properties
-    private lazy var formView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 16
-        view.clipsToBounds = true
-        return view
-    }()
     
-    private lazy var dimmedView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        view.alpha = dimmedAlpha
-        return view
-    }()
+    // MARK: - Properties
+    let datePickerViewController = DatePickerViewController()
+    var onTaskTextUpdate: ((String, Date) -> Void)?
     
-    private let defaultHeight: CGFloat = 500
-    private let dimmedAlpha: CGFloat = 0.6
-    private var formViewHeightConstraint: NSLayoutConstraint?
-    private var formViewBottomConstraint: NSLayoutConstraint?
+    var taskText: String?
+    var taskDate: Date? {
+        didSet {
+            updateDateLabel()
+        }
+    }
     
+    //MARK: - UI Components
     let textView: UITextView = {
         let tv = UITextView()
         tv.isScrollEnabled = false
@@ -31,151 +23,71 @@ class TaskPresenterViewController: UIViewController {
         tv.returnKeyType = .done
         return tv
     }()
-    var taskText: String?
-    var taskDate: Date? {
-        didSet {
-            updateDateLabel()
-        }
-    }
-    let dateView = UIView()
-    let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
-    let dateLabel = UILabel()
-    let datePickerViewController = DatePickerViewController()
-    var onTaskTextUpdate: ((String, Date) -> Void)?
     
-    // MARK: - Life Cycle
+    let dateView = TaskPresenterFieldView(text: "", image: "calendar")
+    let reminderView = TaskPresenterFieldView(text: "Добавить напоминание", image: "bell")
+    let repeaterView = TaskPresenterFieldView(text: "Сделать регулярной", image: "arrow.counterclockwise")
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupConstraints()
-        setupFields()
-        setupForm()
+        setupView()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        animateDimmedView()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(false)
+        if let taskText = textView.text, !taskText.isEmpty {
+            onTaskTextUpdate?(taskText, taskDate ?? Date())
+        }
     }
     
     // MARK: - Setup methods
-    private func setupConstraints() {
-        [dimmedView, formView].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+    func setupView() {
+        view.backgroundColor = .white
         
-        NSLayoutConstraint.activate([
-            dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
-            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            formView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            formView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
-        
-        formViewHeightConstraint = formView.heightAnchor.constraint(equalToConstant: defaultHeight)
-        formViewBottomConstraint = formView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: defaultHeight)
-        
-        formViewHeightConstraint?.isActive = true
-        formViewBottomConstraint?.isActive = true
-    }
-    
-    func setupFields() {
-        dateView.backgroundColor = .clear
-        dateImage.tintColor = .black
-        dateLabel.text = formattedDate(from: taskDate ?? Date())
-        
-        
-        [dateImage, dateLabel].forEach {
-            dateView.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        NSLayoutConstraint.activate([
-            dateImage.leadingAnchor.constraint(equalTo: dateView.leadingAnchor, constant: 16),
-            dateImage.centerYAnchor.constraint(equalTo: dateView.centerYAnchor),
-            
-            dateLabel.leadingAnchor.constraint(equalTo: dateImage.trailingAnchor, constant: 8),
-            dateLabel.centerYAnchor.constraint(equalTo: dateView.centerYAnchor)
-        ])
-    }
-    
-    func setupForm() {
-        view.backgroundColor = .clear
-        dimmedView.addGestureRecognizer(dismissGestureRecognizer)
         dateView.addGestureRecognizer(dateTapGestureRecognizer)
-        
+        updateDateLabel()
+
         textView.delegate = self
         textView.text = taskText
-        
-        [textView, dateView].forEach {
+
+        [textView, dateView, reminderView, repeaterView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
-            textView.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 16),
-            textView.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -16),
-            
-            dateView.widthAnchor.constraint(equalTo: formView.widthAnchor),
+            textView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            dateView.widthAnchor.constraint(equalTo: view.widthAnchor),
             dateView.heightAnchor.constraint(equalToConstant: 32),
-            dateView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
-            dateView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
-            dateView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            dateView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20),
+            dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            reminderView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            reminderView.heightAnchor.constraint(equalToConstant: 32),
+            reminderView.topAnchor.constraint(equalTo: dateView.bottomAnchor, constant: 12),
+            reminderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            reminderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            repeaterView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            repeaterView.heightAnchor.constraint(equalToConstant: 32),
+            repeaterView.topAnchor.constraint(equalTo: reminderView.bottomAnchor, constant: 12),
+            repeaterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            repeaterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
-    
-    // MARK: - Animate methods
-    private func animatePresentForm() {
-        UIView.animate(withDuration: 0.15) {
-            self.formViewBottomConstraint?.constant = 0
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    private func animateDimmedView() {
-        dimmedView.alpha = 0
-        UIView.animate(withDuration: 0) {
-            self.dimmedView.alpha = self.dimmedAlpha
-        } completion: { _ in
-            self.animatePresentForm()
-        }
-    }
-    
-    @objc private func animateDismissView() {
-        dimmedView.alpha = dimmedAlpha
-        UIView.animate(withDuration: 0.15) {
-            self.dimmedView.alpha = 0
-        } completion: { _ in
-            self.dismiss(animated: false)
-        }
         
-        UIView.animate(withDuration: 0.15) {
-            self.textView.resignFirstResponder()
-            self.formViewBottomConstraint?.constant = self.defaultHeight
-            self.view.layoutIfNeeded()
-        }
-        
-        if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate!)
-        }
-    }
-    
-    
-    
     // MARK: - Gesture methods
-    private lazy var dismissGestureRecognizer: UITapGestureRecognizer = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(animateDismissView))
-        return tapGesture
-    }()
-    
     private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
         return tapGesture
     }()
     
-    // MARK: - Button methods
+    // MARK: - Action methods
     @objc private func dateButtonTapped() {
         datePickerViewController.modalPresentationStyle = .overFullScreen
         datePickerViewController.appear(sender: self)
@@ -184,6 +96,7 @@ class TaskPresenterViewController: UIViewController {
         }
     }
     
+    // MARK: - Helper methods
     private func formattedDate(from date: Date) -> String {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
@@ -202,12 +115,11 @@ class TaskPresenterViewController: UIViewController {
     }
     
     private func updateDateLabel() {
-        dateLabel.text = formattedDate(from: taskDate ?? Date())
+        dateView.updateDateLabel(text: formattedDate(from: taskDate ?? Date()))
     }
 }
 
-// MARK: - Extensions
-
+// MARK: - TextView Delegate
 extension TaskPresenterViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let size = CGSize(width: textView.frame.width, height: .infinity)
@@ -228,14 +140,11 @@ extension TaskPresenterViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        let date = datePickerViewController.get()
-        
         if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, date)
-            animateDismissView()
+            onTaskTextUpdate?(taskText, taskDate ?? Date())
+            dismiss(animated: true)
         }
     }
 }
-
 
 
