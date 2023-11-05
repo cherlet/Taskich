@@ -22,6 +22,8 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         setupNavigationBar()
         setupEditModeToolbar()
         getTestCells()
+        
+        StorageManager.shared.fetchTasks()
     }
     
     // MARK: - Setup methods
