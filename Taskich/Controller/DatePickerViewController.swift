@@ -148,6 +148,10 @@ class DatePickerViewController: UIViewController {
         hide()
     }
     
+    func setDateView(_ date: Date?) {
+        datePickerView.setDate(date)
+    }
+    
     private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hide))
         return tapGesture

@@ -10,7 +10,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     var isEditingMode = false
     var selectedRows = Set<Int>()
     var editModeToolbar = EditModeToolbarView()
-    let datePickerViewController = DatePickerViewController()
     weak var delegate: TaskListViewControllerDelegate?
     var editModeToolbarBottomConstraint: NSLayoutConstraint!
     
@@ -319,6 +318,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
 
     
     @objc private func dateButtonTapped() {
+        let datePickerViewController = DatePickerViewController()
         datePickerViewController.modalPresentationStyle = .overFullScreen
         datePickerViewController.appear(sender: self)
         datePickerViewController.onDateSelected = { [weak self] selectedDate in

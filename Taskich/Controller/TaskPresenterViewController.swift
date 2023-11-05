@@ -116,6 +116,7 @@ class TaskPresenterViewController: UIViewController {
     
     private func updateDateLabel() {
         dateView.updateDateLabel(text: formattedDate(from: taskDate ?? Date()))
+        datePickerViewController.setDateView(taskDate)
     }
 }
 

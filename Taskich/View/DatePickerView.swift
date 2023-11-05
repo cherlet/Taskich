@@ -43,16 +43,12 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         
         super.init(frame: frame)
         
-        previousButton.addTarget(self, action: #selector(didTapPreviousButton), for: .touchUpInside)
-            nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
-            updateButtonsState()
-        
         collectionView.register(WeekdaysHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "WeekdaysHeaderViewID")
         
         setupCollectionView()
         setupCalendar()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -70,6 +66,10 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         layout.minimumLineSpacing = 0
         layout.headerReferenceSize = CGSize(width: collectionView.frame.width, height: 50)
         layout.sectionHeadersPinToVisibleBounds = true
+        
+        previousButton.addTarget(self, action: #selector(didTapPreviousButton), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
+        updateButtonsState()
         
         
         [previousButton, monthLabel, nextButton, separatorLine, collectionView].forEach {
@@ -300,6 +300,16 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         let timeZoneSeconds = TimeZone.current.secondsFromGMT()
         date = date.addingTimeInterval(TimeInterval(timeZoneSeconds))
         return date
+    }
+    
+    func setDate(_ date: Date?) {
+        selectedDate = date
+        
+        for (index, _) in days.enumerated() {
+            days[index].state.isSelected = selectedDate == days[index].date
+        }
+        
+        setupCalendar()
     }
 }
 
