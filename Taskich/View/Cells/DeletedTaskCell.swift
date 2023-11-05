@@ -55,7 +55,7 @@ class DeletedTaskCell: UITableViewCell {
     // MARK: - Configure
     func configure(task: Task) {
         self.task = task
-        taskLabel.text = task.label
+        taskLabel.text = task.text
         taskLabel.textColor = .gray
         self.selectionStyle = .none
     }

@@ -50,7 +50,7 @@ class TaskCell: UITableViewCell {
     
     func configure(task: Task) {
         self.task = task
-        taskLabel.text = task.label
+        taskLabel.text = task.text
         updateCheckmarkButton(task.isCompleted)
         self.selectionStyle = .none
         self.checkmarkButton.isSelected = task.isCompleted
@@ -83,7 +83,7 @@ class TaskCell: UITableViewCell {
     // MARK: - Other Methods
     
     @objc private func checkmarkButtonTapped() {
-        guard var task = self.task else { return }
+        guard let task = self.task else { return }
         task.isCompleted = !task.isCompleted
         updateCheckmarkButton(task.isCompleted) { [weak self] in
             self?.task = task

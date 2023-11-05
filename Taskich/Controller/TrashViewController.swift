@@ -3,7 +3,7 @@ import UIKit
 class TrashViewController: UIViewController {
 
     // MARK: - Properties
-    private var tasks: [Task] = []
+    private var trashTasks = [Task]()
     private let tableView: UITableView = {
         let table = UITableView()
         table.separatorStyle = .none
@@ -27,6 +27,7 @@ class TrashViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         setupView()
+        updateData()
     }
     
     // MARK: - Setup Methods
@@ -52,18 +53,25 @@ class TrashViewController: UIViewController {
         ])
     }
     
-    // MARK: - Task Management
-    func addTask(task: Task) {
-        tasks.append(task)
-        tableView.reloadData()
+    // MARK: - Core Data
+    func updateData() {
+        trashTasks = StorageManager.shared.fetchTrashTasks()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
+    
+    // MARK: - Other methods
     
     @objc private func deleteAllTasks() {
         let actionSheet = UIAlertController(title: nil, message: "Вы действительно хотите удалить все задачи?", preferredStyle: .actionSheet)
+        let trashTaskIDs = trashTasks.map { $0.id }
         
         let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
-            self?.tasks.removeAll()
-            self?.tableView.reloadData()
+            for id in trashTaskIDs {
+                StorageManager.shared.deleteTask(with: id)
+            }
+            self?.updateData()
         }
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
         
@@ -83,7 +91,7 @@ class TrashViewController: UIViewController {
 extension TrashViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tasks.count
+        return trashTasks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,24 +100,24 @@ extension TrashViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.delegate = self
-        cell.configure(task: tasks[indexPath.row])
+        cell.configure(task: trashTasks[indexPath.row])
         return cell
     }
 }
 
 // MARK: - DeletedTaskCellDelegate
 extension TrashViewController: DeletedTaskCellDelegate {
-    
     func returnTask(_ cell: DeletedTaskCell, task: Task) {
-        if let index = tasks.firstIndex(where: { $0.label == task.label && $0.date == task.date }) {
-            let returnedTask = tasks.remove(at: index)
+        if let index = trashTasks.firstIndex(where: { $0.text == task.text && $0.date == task.date }) {
+            let returnedTask = trashTasks[index]
+            StorageManager.shared.returnFromTrash(task: returnedTask.id)
+            self.updateData()
             if let navigationController = parent as? UINavigationController,
                let containerVC = navigationController.parent as? ContainerViewController {
-                containerVC.returnDeletedTask(task: returnedTask)
+                containerVC.updateCurrent()
             }
-            
             tableView.beginUpdates()
-            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .fade)
             tableView.endUpdates()
         }
     }

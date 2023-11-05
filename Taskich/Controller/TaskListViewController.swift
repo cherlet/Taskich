@@ -21,9 +21,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         setupTableView()
         setupNavigationBar()
         setupEditModeToolbar()
-        getTestCells()
-        
-        StorageManager.shared.fetchTasks()
+        updateData()
     }
     
     // MARK: - Setup methods
@@ -78,6 +76,14 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         editModeToolbar.deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         editModeToolbar.dateButton.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: - Core Data
+    func updateData() {
+        tasks = StorageManager.shared.fetchCurrentTasks()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
     
     // MARK: - Table view data source
@@ -147,7 +153,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     // MARK: - Drag&Drop protocol
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         let task = tasks[indexPath.row]
-        let itemProvider = NSItemProvider(object: task.label as NSString)
+        let itemProvider = NSItemProvider(object: task.text! as NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
         
         editModeToolbar.isHidden = true
@@ -168,7 +174,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         coordinator.session.loadObjects(ofClass: NSString.self) { items in
             guard let taskLabels = items as? [String] else { return }
             let taskLabel = taskLabels.first
-            if let index = self.tasks.firstIndex(where: { $0.label == taskLabel }) {
+            if let index = self.tasks.firstIndex(where: { $0.text == taskLabel }) {
                 let movedTask = self.tasks.remove(at: index)
                 self.tasks.insert(movedTask, at: destinationIndexPath.row)
                 tableView.reloadData()
@@ -197,9 +203,8 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         addFormController.onAddButtonTapped = { taskText, date in
             if !taskText.isEmpty {
-                let newTask = Task(label: taskText, date: date, isCompleted: false)
-                self.tasks.append(newTask)
-                self.tableView.reloadData()
+                StorageManager.shared.createTask(text: taskText, date: date)
+                self.updateData()
             }
         }
     }
@@ -212,13 +217,14 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         let presenterViewController = TaskPresenterViewController()
         presenterViewController.modalPresentationStyle = .formSheet
         
-        presenterViewController.taskText = tasks[indexPath.row].label
+        presenterViewController.taskText = tasks[indexPath.row].text
         presenterViewController.taskDate = tasks[indexPath.row].date
         
-        presenterViewController.onTaskTextUpdate = { newText, date in
-            self.tasks[indexPath.row].label = newText
-            self.tasks[indexPath.row].date = date
-            self.tableView.reloadData()
+        let taskID = tasks[indexPath.row].id
+        
+        presenterViewController.onTaskTextUpdate = { text, date in
+            StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date)
+            self.updateData()
         }
         
         present(presenterViewController, animated: true)
@@ -272,14 +278,24 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     private func deleteSelectedRows() {
         let sortedSelectedRows = selectedRows.sorted(by: >)
+        var indexPathsToDelete: [IndexPath] = []
+        
         for indexPathRow in sortedSelectedRows {
             let deletedTask = tasks.remove(at: indexPathRow)
+            StorageManager.shared.moveToTrash(task: deletedTask.id)
+            indexPathsToDelete.append(IndexPath(row: indexPathRow, section: 0))
             
             if let navigationController = parent as? UINavigationController,
                let containerVC = navigationController.parent as? ContainerViewController {
-                containerVC.addTaskToTrash(task: deletedTask)
+                containerVC.updateTrash()
             }
+            
+            self.updateData()
         }
+        
+        tableView.beginUpdates()
+        tableView.deleteRows(at: indexPathsToDelete, with: .fade)
+        tableView.endUpdates()
         
         selectedRows.removeAll()
         tableView.reloadData()
@@ -294,7 +310,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     private func changeDateSelectedRows(with date: Date) {
         let sortedSelectedRows = selectedRows.sorted(by: >)
         for indexPathRow in sortedSelectedRows {
-            tasks[indexPathRow].date = date
+            let taskToChange = tasks[indexPathRow]
+            StorageManager.shared.updateTask(with: taskToChange.id, newText: nil, newDate: date)
+            self.updateData()
         }
         cancelEditing()
     }
@@ -326,37 +344,20 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             self.editModeToolbar.isHidden = true
         }
     }
-    
-    func appendTask(task: Task) {
-        var unarchivedTask = task
-        unarchivedTask.isCompleted = false
-        tasks.append(unarchivedTask)
-        tableView.reloadData()
-    }
-    
-    
-    // MARK: - Test Methods
-    private func getTestCells() {
-        tasks.append(Task(label: "Short task", date: datePickerViewController.get(), isCompleted: false))
-        tasks.append(Task(label: "Medium length task for testing", date: datePickerViewController.get(), isCompleted: false))
-        tasks.append(Task(label: "A longer task label for testing purposes", date: datePickerViewController.get(), isCompleted: false))
-        tasks.append(Task(label: "This is a quite long task label for testing different lengths", date: datePickerViewController.get(), isCompleted: false))
-        tasks.append(Task(label: "This is a very very very very very very very long task label to test maximum length situations", date: datePickerViewController.get(), isCompleted: false))
-    }
 }
 
 extension TaskListViewController: TaskCellDelegate {
     func archived(_ cell: TaskCell, didCompleteTask task: Task) {
-        if let index = tasks.firstIndex(where: { $0.label == task.label && $0.date == task.date }) {
-            let completedTask = tasks.remove(at: index)
-            
+        if let index = tasks.firstIndex(where: { $0.text == task.text && $0.date == task.date }) {
+            let archivedTask = tasks[index]
+            StorageManager.shared.moveToArchive(task: archivedTask.id)
+            self.updateData()
             if let navigationController = parent as? UINavigationController,
                let containerVC = navigationController.parent as? ContainerViewController {
-                containerVC.addTaskToArchive(task: completedTask)
+                containerVC.updateArchive()
             }
-            
             tableView.beginUpdates()
-            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .right)
             tableView.endUpdates()
         }
     }

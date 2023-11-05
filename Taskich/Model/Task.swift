@@ -1,7 +1,15 @@
 import Foundation
+import CoreData
 
-struct Task {
-    var label: String
-    var date: Date
-    var isCompleted: Bool
+@objc(Task)
+public class Task: NSManagedObject {}
+
+extension Task {
+    @NSManaged public var id: UUID
+    @NSManaged public var text: String?
+    @NSManaged public var date: Date?
+    @NSManaged public var isCompleted: Bool
+    @NSManaged public var isInTrash: Bool
 }
+
+extension Task : Identifiable {}

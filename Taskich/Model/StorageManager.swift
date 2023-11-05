@@ -17,29 +17,63 @@ public final class StorageManager {
         guard let taskEntity = NSEntityDescription.entity(forEntityName: "Task", in: context) else {
             return
         }
-        let task = Taska(entity: taskEntity, insertInto: context)
+        let task = Task(entity: taskEntity, insertInto: context)
         task.id = UUID()
         task.text = text
         task.date = date
         task.isCompleted = false
+        task.isInTrash = false
         
         appDelegate.saveContext()
     }
     
-    public func fetchTasks() -> [Taska] {
+    public func fetchTasks() -> [Task] {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         do {
-            return (try? context.fetch(fetchRequest) as? [Taska]) ?? []
+            return (try? context.fetch(fetchRequest) as? [Task]) ?? []
         }
     }
     
-    public func fetchTask(with id: UUID) -> Taska? {
+    public func fetchCurrentTasks() -> [Task] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "isCompleted == %@", NSNumber(value: false)),
+            NSPredicate(format: "isInTrash == %@", NSNumber(value: false))
+        ])
+        
+        do {
+            return (try? context.fetch(fetchRequest) as? [Task]) ?? []
+        }
+    }
+    
+    public func fetchArchivedTasks() -> [Task] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "isCompleted == %@", NSNumber(value: true)),
+            NSPredicate(format: "isInTrash == %@", NSNumber(value: false))
+        ])
+        
+        do {
+            return (try? context.fetch(fetchRequest) as? [Task]) ?? []
+        }
+    }
+    
+    public func fetchTrashTasks() -> [Task] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "isInTrash == %@", NSNumber(value: true))
+        
+        do {
+            return (try? context.fetch(fetchRequest) as? [Task]) ?? []
+        }
+    }
+    
+    public func fetchTask(with id: UUID) -> Task? {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
         do {
-            let tasks = try? context.fetch(fetchRequest) as? [Taska]
+            let tasks = try? context.fetch(fetchRequest) as? [Task]
             return tasks?.first
         }
     }
@@ -49,7 +83,7 @@ public final class StorageManager {
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
         do {
-            guard let tasks = try? context.fetch(fetchRequest) as? [Taska],
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
                   let task = tasks.first else { return }
             
             if let newText = newText {
@@ -67,7 +101,7 @@ public final class StorageManager {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         do {
-            let tasks = try? context.fetch(fetchRequest) as? [Taska]
+            let tasks = try? context.fetch(fetchRequest) as? [Task]
             tasks?.forEach { context.delete($0) }
         }
         
@@ -79,12 +113,63 @@ public final class StorageManager {
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
         do {
-            guard let tasks = try? context.fetch(fetchRequest) as? [Taska],
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
                   let task = tasks.first else { return }
             context.delete(task)
         }
         
         appDelegate.saveContext()
     }
-
+    
+    public func moveToArchive(task id: UUID) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
+                  let task = tasks.first else { return }
+            task.isCompleted = true
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    public func returnFromArchive(task id: UUID) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
+                  let task = tasks.first else { return }
+            task.isCompleted = false
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    public func moveToTrash(task id: UUID) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
+                  let task = tasks.first else { return }
+            task.isInTrash = true
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    public func returnFromTrash(task id: UUID) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let tasks = try? context.fetch(fetchRequest) as? [Task],
+                  let task = tasks.first else { return }
+            task.isInTrash = false
+        }
+        
+        appDelegate.saveContext()
+    }
 }

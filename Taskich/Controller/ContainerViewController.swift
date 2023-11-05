@@ -36,22 +36,18 @@ class ContainerViewController: UIViewController {
         self.navigationViewController = navigationViewController
     }
     
-    // MARK: - Datasource methods
-    func addTaskToArchive(task: Task) {
-        archiveViewController.addTask(task: task)
-    }
-    
-    func addTaskToTrash(task: Task) {
-        trashViewController.addTask(task: task)
-    }
-    
-    func unarchivedTask(task: Task) {
-        taskListViewController.appendTask(task: task)
-    }
-    
-    func returnDeletedTask(task: Task) {
-        taskListViewController.appendTask(task: task)
-    }
+    // MARK: - Datasource update
+        func updateCurrent() {
+            taskListViewController.updateData()
+        }
+        
+        func updateArchive() {
+            archiveViewController.updateData()
+        }
+        
+        func updateTrash() {
+            trashViewController.updateData()
+        }
 }
 
 // MARK: - TaskListVC Delegate
@@ -97,7 +93,6 @@ extension ContainerViewController: MenuViewControllerDelegate {
             case .trash:
                 self.setViewController(to: self.trashViewController)
             }
-        
     }
     
     private func setViewController(to vc: UIViewController?) {
