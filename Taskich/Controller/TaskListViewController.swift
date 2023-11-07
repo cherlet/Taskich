@@ -115,10 +115,8 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         // Design for editingMode
         if selectedRows.contains(indexPath) {
-            cell.layer.cornerRadius = 8
             cell.selectedBackground.isHidden = false
         } else {
-            cell.layer.cornerRadius = 0
             cell.selectedBackground.isHidden = true
         }
         
