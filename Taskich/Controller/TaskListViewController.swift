@@ -313,7 +313,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
                 if self.selectedRows.isEmpty {
                     self.cancelEditing()
                 } else {
-                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                    self.tableView.reloadData()
                 }
             }
         }
