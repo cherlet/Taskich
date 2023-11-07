@@ -30,6 +30,7 @@
 		0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */; };
 		07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */; };
 		077E090F2AF6DA0300F9AC16 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 077E090D2AF6DA0300F9AC16 /* CoreData.xcdatamodeld */; };
+		07D077342AF7F8610030DB86 /* TimePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D077332AF7F8610030DB86 /* TimePickerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterFieldView.swift; sourceTree = "<group>"; };
 		077E090E2AF6DA0300F9AC16 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
+		07D077332AF7F8610030DB86 /* TimePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerViewController.swift; sourceTree = "<group>"; };
 		07DA6E772ABB7963002386B7 /* Taskich.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taskich.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07DA6E882ABB7967002386B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,6 +102,7 @@
 				0717C8842AF2E77F00D29342 /* TaskListViewController.swift */,
 				0717C8862AF2E77F00D29342 /* TaskPresenterViewController.swift */,
 				0717C8852AF2E77F00D29342 /* TrashViewController.swift */,
+				07D077332AF7F8610030DB86 /* TimePickerViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */,
 				0717C8A52AF2E98B00D29342 /* WeekdaysHeaderView.swift in Sources */,
 				0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */,
+				07D077342AF7F8610030DB86 /* TimePickerViewController.swift in Sources */,
 				07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */,
 				0717C88E2AF2E77F00D29342 /* TaskPresenterViewController.swift in Sources */,
 				0717C8AB2AF2E9AE00D29342 /* DateCell.swift in Sources */,

@@ -1,15 +1,15 @@
-//
-//  TaskPresenterFieldView.swift
-//  Taskich
-//
-//  Created by Усман Махмутхажиев on 02.11.2023.
-//
-
 import UIKit
 
 class TaskPresenterFieldView: UIView {
     let label = UILabel()
     let image = UIImageView()
+    lazy var deleteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
+        button.tintColor = .gray
+        button.isHidden = true
+        return button
+    }()
 
     init(text: String, image: String) {
         super.init(frame: .zero)
@@ -25,7 +25,7 @@ class TaskPresenterFieldView: UIView {
         image.tintColor = .systemGreen
         label.textColor = .gray
         
-        [image, label].forEach {
+        [image, label, deleteButton].forEach {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -36,13 +36,28 @@ class TaskPresenterFieldView: UIView {
             image.widthAnchor.constraint(equalToConstant: 20),
             
             label.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 8),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            deleteButton.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
     
     func updateDateLabel(text: String) {
         self.label.text = text
         self.label.textColor = .black
+    }
+    
+    func updateReminderLabel(_ text: String?) {
+        if let text = text {
+            self.label.text = text
+            self.label.textColor = .black
+            self.deleteButton.isHidden = false
+        } else {
+            self.label.text = "Добавить напоминание"
+            self.label.textColor = .gray
+            self.deleteButton.isHidden = true
+        }
     }
     
     required init?(coder: NSCoder) {

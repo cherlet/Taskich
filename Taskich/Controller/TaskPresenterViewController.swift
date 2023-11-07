@@ -4,9 +4,11 @@ class TaskPresenterViewController: UIViewController {
     
     // MARK: - Properties
     let datePickerViewController = DatePickerViewController()
+    let timePickerViewController = TimePickerViewController()
     var onTaskTextUpdate: ((String, Date) -> Void)?
     
     var taskText: String?
+    var taskReminder: Date?
     var taskDate: Date? {
         didSet {
             updateDateLabel()
@@ -46,6 +48,9 @@ class TaskPresenterViewController: UIViewController {
         view.backgroundColor = .white
         
         dateView.addGestureRecognizer(dateTapGestureRecognizer)
+        reminderView.addGestureRecognizer(reminderTapGestureRecognizer)
+        reminderView.deleteButton.addTarget(self, action: #selector(reminderDeleteButtonTapped), for: .touchUpInside)
+        
         updateDateLabel()
 
         textView.delegate = self
@@ -83,17 +88,36 @@ class TaskPresenterViewController: UIViewController {
         
     // MARK: - Gesture methods
     private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateViewTapped))
+        return tapGesture
+    }()
+    
+    private lazy var reminderTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(reminderViewTapped))
         return tapGesture
     }()
     
     // MARK: - Action methods
-    @objc private func dateButtonTapped() {
+    @objc private func dateViewTapped() {
         datePickerViewController.modalPresentationStyle = .overFullScreen
         datePickerViewController.appear(sender: self)
         datePickerViewController.onDateSelected = { selectedDate in
             self.taskDate = selectedDate
         }
+    }
+    
+    @objc private func reminderViewTapped() {
+        timePickerViewController.modalPresentationStyle = .overFullScreen
+        timePickerViewController.appear(sender: self, with: taskDate ?? Date())
+        timePickerViewController.onTimeSelected = { [weak self] selectedTime in
+            self?.taskReminder = selectedTime
+            self?.updateReminderLabel(deleted: false)
+        }
+    }
+    
+    @objc private func reminderDeleteButtonTapped() {
+        updateReminderLabel(deleted: true)
+        self.taskReminder = nil
     }
     
     // MARK: - Helper methods
@@ -114,9 +138,24 @@ class TaskPresenterViewController: UIViewController {
         return dateFormatter.string(from: date)
     }
     
+    private func formattedTime(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        
+        return dateFormatter.string(from: date)
+    }
+    
     private func updateDateLabel() {
         dateView.updateDateLabel(text: formattedDate(from: taskDate ?? Date()))
         datePickerViewController.setDateView(taskDate)
+    }
+    
+    private func updateReminderLabel(deleted: Bool) {
+        if deleted {
+            reminderView.updateReminderLabel(nil)
+        } else {
+            reminderView.updateReminderLabel(formattedTime(from: taskReminder ?? Date()))
+        }
     }
 }
 
