@@ -208,28 +208,45 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
     }
     
-    @objc private func didTapMenuButton() {
-        delegate?.didTapMenuButton()
-    }
-    
     private func presentTask(at indexPath: IndexPath) {
         let presenterViewController = TaskPresenterViewController()
         presenterViewController.modalPresentationStyle = .formSheet
         
         presenterViewController.taskText = tasks[indexPath.row].text
         presenterViewController.taskDate = tasks[indexPath.row].date
+        presenterViewController.taskReminder = tasks[indexPath.row].reminder
         
         let taskID = tasks[indexPath.row].id
+        let tempReminder = tasks[indexPath.row].reminder
         
-        presenterViewController.onTaskTextUpdate = { text, date in
-            StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date)
+        presenterViewController.onTaskTextUpdate = { text, date, reminder in
+            StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date, newReminder: reminder)
             self.updateData()
+            self.configureNotification(previousReminder: tempReminder, task: self.tasks[indexPath.row])
         }
         
         present(presenterViewController, animated: true)
     }
     
+    private func configureNotification(previousReminder: Date?, task: Task) {
+        if previousReminder == nil && task.reminder != nil {
+            NotificationManager.shared.createNotification(for: task)
+        } else if previousReminder != nil && task.reminder == nil {
+            NotificationManager.shared.deleteNotification(with: task.id)
+        } else {
+            NotificationManager.shared.updateNotification(in: task)
+        }
+    }
+    
+    @objc private func didTapMenuButton() {
+        delegate?.didTapMenuButton()
+    }
+    
     // MARK: - Other Methods
+    private func configureNotification() {
+        
+    }
+    
     @objc private func leftSwipeGestureRecognizer(_ gesture: UISwipeGestureRecognizer) {
         
         guard let indexPath = tableView.indexPathForRow(at: gesture.location(in: tableView)),
@@ -310,7 +327,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         let sortedSelectedRows = selectedRows.sorted(by: >)
         for indexPathRow in sortedSelectedRows {
             let taskToChange = tasks[indexPathRow]
-            StorageManager.shared.updateTask(with: taskToChange.id, newText: nil, newDate: date)
+            StorageManager.shared.updateTask(with: taskToChange.id, newText: nil, newDate: date, newReminder: nil)
             self.updateData()
         }
         cancelEditing()

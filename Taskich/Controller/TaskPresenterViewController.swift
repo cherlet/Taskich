@@ -5,15 +5,11 @@ class TaskPresenterViewController: UIViewController {
     // MARK: - Properties
     let datePickerViewController = DatePickerViewController()
     let timePickerViewController = TimePickerViewController()
-    var onTaskTextUpdate: ((String, Date) -> Void)?
+    var onTaskTextUpdate: ((String, Date, Date?) -> Void)?
     
     var taskText: String?
+    var taskDate: Date?
     var taskReminder: Date?
-    var taskDate: Date? {
-        didSet {
-            updateDateLabel()
-        }
-    }
     
     //MARK: - UI Components
     let textView: UITextView = {
@@ -28,7 +24,6 @@ class TaskPresenterViewController: UIViewController {
     
     let dateView = TaskPresenterFieldView(text: "", image: "calendar")
     let reminderView = TaskPresenterFieldView(text: "Добавить напоминание", image: "bell")
-    let repeaterView = TaskPresenterFieldView(text: "Сделать регулярной", image: "arrow.counterclockwise")
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -39,7 +34,7 @@ class TaskPresenterViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(false)
         if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate ?? Date())
+            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder)
         }
     }
     
@@ -52,11 +47,12 @@ class TaskPresenterViewController: UIViewController {
         reminderView.deleteButton.addTarget(self, action: #selector(reminderDeleteButtonTapped), for: .touchUpInside)
         
         updateDateLabel()
+        updateReminderLabel()
 
         textView.delegate = self
         textView.text = taskText
 
-        [textView, dateView, reminderView, repeaterView].forEach {
+        [textView, dateView, reminderView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -76,14 +72,12 @@ class TaskPresenterViewController: UIViewController {
             reminderView.heightAnchor.constraint(equalToConstant: 32),
             reminderView.topAnchor.constraint(equalTo: dateView.bottomAnchor, constant: 12),
             reminderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            reminderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            repeaterView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            repeaterView.heightAnchor.constraint(equalToConstant: 32),
-            repeaterView.topAnchor.constraint(equalTo: reminderView.bottomAnchor, constant: 12),
-            repeaterView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            repeaterView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            reminderView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+    }
+    
+    func setupProperties() {
+        
     }
         
     // MARK: - Gesture methods
@@ -101,22 +95,24 @@ class TaskPresenterViewController: UIViewController {
     @objc private func dateViewTapped() {
         datePickerViewController.modalPresentationStyle = .overFullScreen
         datePickerViewController.appear(sender: self)
-        datePickerViewController.onDateSelected = { selectedDate in
-            self.taskDate = selectedDate
+        datePickerViewController.onDateSelected = { [weak self] selectedDate in
+            self?.taskDate = selectedDate
+            self?.updateDateLabel()
         }
     }
     
     @objc private func reminderViewTapped() {
+        NotificationManager.shared.requestNotificationAuthorizationIfNeeded()
         timePickerViewController.modalPresentationStyle = .overFullScreen
         timePickerViewController.appear(sender: self, with: taskDate ?? Date())
         timePickerViewController.onTimeSelected = { [weak self] selectedTime in
             self?.taskReminder = selectedTime
-            self?.updateReminderLabel(deleted: false)
+            self?.updateReminderLabel()
         }
     }
     
     @objc private func reminderDeleteButtonTapped() {
-        updateReminderLabel(deleted: true)
+        reminderView.deleteReminderLabel()
         self.taskReminder = nil
     }
     
@@ -150,12 +146,9 @@ class TaskPresenterViewController: UIViewController {
         datePickerViewController.setDateView(taskDate)
     }
     
-    private func updateReminderLabel(deleted: Bool) {
-        if deleted {
-            reminderView.updateReminderLabel(nil)
-        } else {
-            reminderView.updateReminderLabel(formattedTime(from: taskReminder ?? Date()))
-        }
+    private func updateReminderLabel() {
+        guard let reminder = taskReminder else { return }
+        reminderView.updateReminderLabel(formattedTime(from: reminder))
     }
 }
 
@@ -181,7 +174,7 @@ extension TaskPresenterViewController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate ?? Date())
+            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder)
             dismiss(animated: true)
         }
     }

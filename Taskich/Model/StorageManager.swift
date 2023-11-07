@@ -13,7 +13,7 @@ public final class StorageManager {
         appDelegate.persistentContainer.viewContext
     }
     
-    public func createTask(text: String, date: Date) {
+    public func createTask(text: String, date: Date, reminder: Date? = nil) {
         guard let taskEntity = NSEntityDescription.entity(forEntityName: "Task", in: context) else {
             return
         }
@@ -21,6 +21,7 @@ public final class StorageManager {
         task.id = UUID()
         task.text = text
         task.date = date
+        task.reminder = reminder
         task.isCompleted = false
         task.isInTrash = false
         
@@ -78,7 +79,7 @@ public final class StorageManager {
         }
     }
     
-    public func updateTask(with id: UUID, newText: String?, newDate: Date?) {
+    public func updateTask(with id: UUID, newText: String?, newDate: Date?, newReminder: Date?) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
@@ -92,6 +93,8 @@ public final class StorageManager {
             if let newDate = newDate {
                 task.date = newDate
             }
+            
+            task.reminder = newReminder
         }
         
         appDelegate.saveContext()

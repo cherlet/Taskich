@@ -8,6 +8,7 @@ extension Task {
     @NSManaged public var id: UUID
     @NSManaged public var text: String?
     @NSManaged public var date: Date?
+    @NSManaged public var reminder: Date?
     @NSManaged public var isCompleted: Bool
     @NSManaged public var isInTrash: Bool
 }

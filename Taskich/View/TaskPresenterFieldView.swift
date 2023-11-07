@@ -48,16 +48,16 @@ class TaskPresenterFieldView: UIView {
         self.label.textColor = .black
     }
     
-    func updateReminderLabel(_ text: String?) {
-        if let text = text {
-            self.label.text = text
-            self.label.textColor = .black
-            self.deleteButton.isHidden = false
-        } else {
-            self.label.text = "Добавить напоминание"
-            self.label.textColor = .gray
-            self.deleteButton.isHidden = true
-        }
+    func updateReminderLabel(_ text: String) {
+        self.label.text = text
+        self.label.textColor = .black
+        self.deleteButton.isHidden = false
+    }
+    
+    func deleteReminderLabel() {
+        self.label.text = "Добавить напоминание"
+        self.label.textColor = .gray
+        self.deleteButton.isHidden = true
     }
     
     required init?(coder: NSCoder) {
