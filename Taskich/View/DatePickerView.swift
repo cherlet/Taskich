@@ -120,8 +120,7 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         
         days.removeAll()
         
-        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
-        let today = Date().addingTimeInterval(TimeInterval(timeZoneSeconds))
+        let today = Date()
         for day in range {
             guard let date = calendar.date(byAdding: .day, value: day - 1, to: startDate) else { continue }
             
@@ -296,9 +295,7 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func getDate() -> Date {
-        var date = selectedDate ?? Date()
-        let timeZoneSeconds = TimeZone.current.secondsFromGMT()
-        date = date.addingTimeInterval(TimeInterval(timeZoneSeconds))
+        let date = selectedDate ?? Date()
         return date
     }
     

@@ -5,11 +5,7 @@ public final class NotificationManager {
     private init() {}
     
     private func authorizeRequest() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-            if granted {
-                //
-            }
-        }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in }
     }
     
     public func requestNotificationAuthorizationIfNeeded() {

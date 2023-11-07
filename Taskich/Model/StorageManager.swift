@@ -79,6 +79,29 @@ public final class StorageManager {
         }
     }
     
+    public func fetchTasksGroupedBySections() -> [[Task]] {
+        let allTasks = fetchCurrentTasks()
+        let calendar = Calendar.current
+
+        let todayTasks = allTasks.filter {
+            calendar.isDateInToday($0.date ?? Date())
+        }
+        let tomorrowTasks = allTasks.filter {
+            calendar.isDateInTomorrow($0.date ?? Date())
+        }
+        let weekTasks = allTasks.filter {
+            guard let date = $0.date else { return false }
+            return calendar.isDate(date, equalTo: Date(), toGranularity: .weekOfYear) &&
+                   !calendar.isDateInToday(date) && !calendar.isDateInTomorrow(date)
+        }
+        let futureTasks = allTasks.filter {
+            guard let date = $0.date else { return true }
+            return !calendar.isDate(date, equalTo: Date(), toGranularity: .weekOfYear)
+        }
+
+        return [todayTasks, tomorrowTasks, weekTasks, futureTasks]
+    }
+    
     public func updateTask(with id: UUID, newText: String?, newDate: Date?, newReminder: Date?) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

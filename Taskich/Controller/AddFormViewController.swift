@@ -14,11 +14,7 @@ class AddFormViewController: UIViewController {
     let dateView = UIView()
     let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
     let dateLabel = UILabel()
-    var taskDate: Date? {
-        didSet {
-            updateDateLabel()
-        }
-    }
+    var taskDate: Date?
     
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
@@ -199,6 +195,7 @@ class AddFormViewController: UIViewController {
         }
         datePickerViewController.onDateSelected = { selectedDate in
             self.taskDate = selectedDate
+            self.updateDateLabel()
         }
         datePickerViewController.appear(sender: self)
     }
@@ -265,6 +262,13 @@ class AddFormViewController: UIViewController {
         } else {
             dateFormatter.dateFormat = "d MMMM"
         }
+        
+        return dateFormatter.string(from: date)
+    }
+    
+    private func formattedTime(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
         
         return dateFormatter.string(from: date)
     }

@@ -6,9 +6,9 @@ protocol TaskListViewControllerDelegate: AnyObject {
 
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
     
-    var tasks = [Task]()
+    var tasks = [[Task]]()
     var isEditingMode = false
-    var selectedRows = Set<Int>()
+    var selectedRows = Set<IndexPath>()
     var editModeToolbar = EditModeToolbarView()
     weak var delegate: TaskListViewControllerDelegate?
     var editModeToolbarBottomConstraint: NSLayoutConstraint!
@@ -52,9 +52,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
         
         let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
-                                                           style: .done,
-                                                           target: self,
-                                                           action: #selector(didTapMenuButton))
+                                         style: .done,
+                                         target: self,
+                                         action: #selector(didTapMenuButton))
         menuButton.tintColor = .black
         navigationItem.leftBarButtonItem = menuButton
     }
@@ -63,7 +63,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         view.addSubview(editModeToolbar)
         editModeToolbar.isHidden = true
         editModeToolbarBottomConstraint = editModeToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 100)
-
+        
         
         editModeToolbar.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -79,15 +79,23 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     
     // MARK: - Core Data
     func updateData() {
-        tasks = StorageManager.shared.fetchCurrentTasks()
+        tasks = StorageManager.shared.fetchTasksGroupedBySections()
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
     
     // MARK: - Table view data source
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return tasks.count
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tasks[section].count
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return TaskSection(rawValue: section)?.title
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -103,10 +111,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         cell.addGestureRecognizer(swipeLeftGesture)
         
         // TaskCell.configure
-        cell.configure(task: tasks[indexPath.row])
+        cell.configure(task: tasks[indexPath.section][indexPath.row])
         
         // Design for editingMode
-        if selectedRows.contains(indexPath.row) {
+        if selectedRows.contains(indexPath) {
             cell.layer.cornerRadius = 8
             cell.selectedBackground.isHidden = false
         } else {
@@ -120,10 +128,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     // MARK: - Table view delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditingMode {
-            if selectedRows.contains(indexPath.row) {
-                selectedRows.remove(indexPath.row)
+            if selectedRows.contains(indexPath) {
+                selectedRows.remove(indexPath)
             } else {
-                selectedRows.insert(indexPath.row)
+                selectedRows.insert(indexPath)
             }
             
             tableView.reloadRows(at: [indexPath], with: .none)
@@ -145,13 +153,31 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             cancelEditing()
         }
         
-        let movedTask = tasks.remove(at: sourceIndexPath.row)
-        tasks.insert(movedTask, at: destinationIndexPath.row)
+        let newDate: Date
+        switch destinationIndexPath.section {
+        case 0:
+            newDate = taskDates.today
+        case 1:
+            newDate = taskDates.tomorrow
+        case 2:
+            newDate = taskDates.onWeek
+        default:
+            newDate = taskDates.nextWeek
+        }
+        
+        if sourceIndexPath.section != destinationIndexPath.section {
+            tasks[sourceIndexPath.section][sourceIndexPath.row].date = newDate
+            let movedTask = tasks[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            tasks[destinationIndexPath.section].insert(movedTask, at: destinationIndexPath.row)
+        } else {
+            let movedTask = tasks[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            tasks[destinationIndexPath.section].insert(movedTask, at: destinationIndexPath.row)
+        }
     }
     
     // MARK: - Drag&Drop protocol
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let task = tasks[indexPath.row]
+        let task = tasks[indexPath.section][indexPath.row]
         let itemProvider = NSItemProvider(object: task.text! as NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
         
@@ -171,12 +197,15 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         }
         
         coordinator.session.loadObjects(ofClass: NSString.self) { items in
-            guard let taskLabels = items as? [String] else { return }
-            let taskLabel = taskLabels.first
-            if let index = self.tasks.firstIndex(where: { $0.text == taskLabel }) {
-                let movedTask = self.tasks.remove(at: index)
-                self.tasks.insert(movedTask, at: destinationIndexPath.row)
-                tableView.reloadData()
+            guard let stringItems = items as? [String], let taskLabel = stringItems.first else { return }
+            
+            for (sectionIndex, section) in self.tasks.enumerated() {
+                if let rowIndex = section.firstIndex(where: { $0.text == taskLabel }) {
+                    let movedTask = self.tasks[sectionIndex].remove(at: rowIndex)
+                    self.tasks[destinationIndexPath.section].insert(movedTask, at: destinationIndexPath.row)
+                    tableView.reloadData()
+                    break
+                }
             }
         }
     }
@@ -212,22 +241,29 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         let presenterViewController = TaskPresenterViewController()
         presenterViewController.modalPresentationStyle = .formSheet
         
-        presenterViewController.taskText = tasks[indexPath.row].text
-        presenterViewController.taskDate = tasks[indexPath.row].date
-        presenterViewController.taskReminder = tasks[indexPath.row].reminder
+        presenterViewController.taskText = tasks[indexPath.section][indexPath.row].text
+        presenterViewController.taskDate = tasks[indexPath.section][indexPath.row].date
+        presenterViewController.taskReminder = tasks[indexPath.section][indexPath.row].reminder
         
-        let taskID = tasks[indexPath.row].id
-        let tempReminder = tasks[indexPath.row].reminder
+        let taskID = tasks[indexPath.section][indexPath.row].id
+        let tempReminder = tasks[indexPath.section][indexPath.row].reminder
         
         presenterViewController.onTaskTextUpdate = { text, date, reminder in
             StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date, newReminder: reminder)
             self.updateData()
-            self.configureNotification(previousReminder: tempReminder, task: self.tasks[indexPath.row])
+            
+            guard let tempTask = StorageManager.shared.fetchTask(with: taskID) else { return }
+            self.configureNotification(previousReminder: tempReminder, task: tempTask)
         }
         
         present(presenterViewController, animated: true)
     }
     
+    @objc private func didTapMenuButton() {
+        delegate?.didTapMenuButton()
+    }
+    
+    // MARK: - Other Methods
     private func configureNotification(previousReminder: Date?, task: Task) {
         if previousReminder == nil && task.reminder != nil {
             NotificationManager.shared.createNotification(for: task)
@@ -236,15 +272,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         } else {
             NotificationManager.shared.updateNotification(in: task)
         }
-    }
-    
-    @objc private func didTapMenuButton() {
-        delegate?.didTapMenuButton()
-    }
-    
-    // MARK: - Other Methods
-    private func configureNotification() {
-        
     }
     
     @objc private func leftSwipeGestureRecognizer(_ gesture: UISwipeGestureRecognizer) {
@@ -259,10 +286,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         showEditModeToolbar()
         setupNavigationBar()
         
-        if selectedRows.contains(indexPath.row) {
-            selectedRows.remove(indexPath.row)
+        if selectedRows.contains(indexPath) {
+            selectedRows.remove(indexPath)
         } else {
-            selectedRows.insert(indexPath.row)
+            selectedRows.insert(indexPath)
         }
         
         leftSwipeGestureAnimation(for: cell, at: indexPath)
@@ -293,20 +320,18 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     private func deleteSelectedRows() {
-        let sortedSelectedRows = selectedRows.sorted(by: >)
+        let sortedSelectedRows = selectedRows.sorted { $0.section > $1.section || ($0.section == $1.section && $0.row > $1.row) }
         var indexPathsToDelete: [IndexPath] = []
         
-        for indexPathRow in sortedSelectedRows {
-            let deletedTask = tasks.remove(at: indexPathRow)
+        for indexPath in sortedSelectedRows {
+            let deletedTask = tasks[indexPath.section].remove(at: indexPath.row)
             StorageManager.shared.moveToTrash(task: deletedTask.id)
-            indexPathsToDelete.append(IndexPath(row: indexPathRow, section: 0))
+            indexPathsToDelete.append(indexPath)
             
             if let navigationController = parent as? UINavigationController,
                let containerVC = navigationController.parent as? ContainerViewController {
                 containerVC.updateTrash()
             }
-            
-            self.updateData()
         }
         
         tableView.beginUpdates()
@@ -316,7 +341,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         selectedRows.removeAll()
         tableView.reloadData()
     }
-
+    
     
     @objc private func deleteButtonTapped() {
         deleteSelectedRows()
@@ -324,15 +349,15 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     private func changeDateSelectedRows(with date: Date) {
-        let sortedSelectedRows = selectedRows.sorted(by: >)
-        for indexPathRow in sortedSelectedRows {
-            let taskToChange = tasks[indexPathRow]
+        for indexPath in selectedRows.sorted(by: { $0.section > $1.section || ($0.section == $1.section && $0.row > $1.row) }) {
+            let taskToChange = tasks[indexPath.section][indexPath.row]
             StorageManager.shared.updateTask(with: taskToChange.id, newText: nil, newDate: date, newReminder: nil)
-            self.updateData()
         }
+        
+        updateData()
         cancelEditing()
     }
-
+    
     
     @objc private func dateButtonTapped() {
         let datePickerViewController = DatePickerViewController()
@@ -350,9 +375,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         UIView.animate(withDuration: 0.15) {
             self.view.layoutIfNeeded()
         }
-
+        
     }
-
+    
     private func hideEditModeToolbar() {
         editModeToolbarBottomConstraint.constant = 100
         UIView.animate(withDuration: 0.15) {
@@ -365,22 +390,63 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
 
 extension TaskListViewController: TaskCellDelegate {
     func archived(_ cell: TaskCell, didCompleteTask task: Task) {
-        if let index = tasks.firstIndex(where: { $0.text == task.text && $0.date == task.date }) {
-            let archivedTask = tasks[index]
-            StorageManager.shared.moveToArchive(task: archivedTask.id)
-            self.updateData()
-            if let navigationController = parent as? UINavigationController,
-               let containerVC = navigationController.parent as? ContainerViewController {
-                containerVC.updateArchive()
+        for (sectionIndex, section) in tasks.enumerated() {
+            if let rowIndex = section.firstIndex(where: { $0.text == task.text && $0.date == task.date }) {
+                let archivedTask = tasks[sectionIndex].remove(at: rowIndex)
+                StorageManager.shared.moveToArchive(task: archivedTask.id)
+                updateData()
+                
+                if let navigationController = parent as? UINavigationController,
+                   let containerVC = navigationController.parent as? ContainerViewController {
+                    containerVC.updateArchive()
+                }
+                
+                tableView.beginUpdates()
+                tableView.deleteRows(at: [IndexPath(row: rowIndex, section: sectionIndex)], with: .right)
+                tableView.endUpdates()
+                break
             }
-            tableView.beginUpdates()
-            tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .right)
-            tableView.endUpdates()
         }
     }
     
     func unarchived(_ cell: TaskCell, didUnarchivedTask task: Task) {
         //
+    }
+}
+
+extension TaskListViewController {
+    enum TaskSection: Int, CaseIterable {
+        case today
+        case tomorrow
+        case week
+        case future
+        
+        var title: String {
+            switch self {
+            case .today: return "Сегодня"
+            case .tomorrow: return "Завтра"
+            case .week: return "На неделе"
+            case .future: return "Потом"
+            }
+        }
+    }
+    
+    struct TaskDates {
+        let today: Date
+        let tomorrow: Date
+        let onWeek: Date
+        let nextWeek: Date
+    }
+    
+    var taskDates: TaskDates {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
+              let onWeek = calendar.date(byAdding: .day, value: 2, to: today),
+              let nextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: today) else {
+            fatalError("Не удалось вычислить даты.")
+        }
+        return TaskDates(today: today, tomorrow: tomorrow, onWeek: onWeek, nextWeek: nextWeek)
     }
 }
 
