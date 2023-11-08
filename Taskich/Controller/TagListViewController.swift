@@ -8,7 +8,7 @@ class TagListViewController: UIViewController {
     
     private let tableView: UITableView = {
         let table = UITableView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.register(TagCell.self, forCellReuseIdentifier: "TagCell")
         table.separatorStyle = .none
         return table
     }()
@@ -69,10 +69,10 @@ class TagListViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: formView.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: formView.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: formView.topAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: formView.leadingAnchor, constant: 8),
+            tableView.trailingAnchor.constraint(equalTo: formView.trailingAnchor, constant: -8),
+            tableView.bottomAnchor.constraint(equalTo: formView.bottomAnchor, constant: -16)
         ])
     }
     
@@ -130,11 +130,8 @@ extension TagListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = tags[indexPath.row].name
-        cell.textLabel?.textColor = .black
-        cell.imageView?.image = UIImage(systemName: "circle.fill")
-        cell.imageView?.tintColor =  UIColor(named: tags[indexPath.row].color)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TagCell", for: indexPath) as? TagCell else { fatalError() }
+        cell.configure(tag: tags[indexPath.row])
         return cell
     }
 }

@@ -7,6 +7,7 @@ protocol MenuViewControllerDelegate: AnyObject {
 class MenuViewController: UIViewController {
     // MARK: - Properties
     weak var delegate: MenuViewControllerDelegate?
+    private let menuTagsView = MenuTagsView()
     
     private lazy var tasks: MenuItemView = {
         let item = MenuItemView()
@@ -39,9 +40,9 @@ class MenuViewController: UIViewController {
     
     private lazy var tagsLabel: UILabel = {
         let label = UILabel()
-        label.text = "Тэги"
-        label.font = UIFont.systemFont(ofSize: 17)
-        label.textColor = .gray
+        label.text = "ТЭГИ"
+        label.font = UIFont.preferredFont(forTextStyle: .headline).withSize(16)
+        label.textColor = .gray.withAlphaComponent(0.7)
         return label
     }()
     
@@ -84,7 +85,7 @@ class MenuViewController: UIViewController {
             tagsLabel.leadingAnchor.constraint(equalTo: tags.leadingAnchor, constant: 16),
             tagsLabel.centerYAnchor.constraint(equalTo: tags.centerYAnchor),
             
-            tagsButton.trailingAnchor.constraint(equalTo: tags.trailingAnchor, constant: -32),
+            tagsButton.trailingAnchor.constraint(equalTo: tags.trailingAnchor, constant: -24),
             tagsButton.centerYAnchor.constraint(equalTo: tags.centerYAnchor)
         ])
         
@@ -100,10 +101,18 @@ class MenuViewController: UIViewController {
         view.addSubview(separatorLine)
         separatorLine.translatesAutoresizingMaskIntoConstraints = false
         
+        view.addSubview(menuTagsView)
+        menuTagsView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             tasks.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            archive.topAnchor.constraint(equalTo: tasks.bottomAnchor, constant: 8),
-            tags.topAnchor.constraint(equalTo: archive.bottomAnchor, constant: 8),
+            archive.topAnchor.constraint(equalTo: tasks.bottomAnchor, constant: 12),
+            tags.topAnchor.constraint(equalTo: archive.bottomAnchor, constant: 16),
+            
+            menuTagsView.topAnchor.constraint(equalTo: tags.bottomAnchor, constant: 8),
+            menuTagsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            menuTagsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60),
+            menuTagsView.bottomAnchor.constraint(equalTo: separatorLine.topAnchor),
             
             trash.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             
