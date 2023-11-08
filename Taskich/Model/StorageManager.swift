@@ -13,7 +13,9 @@ public final class StorageManager {
         appDelegate.persistentContainer.viewContext
     }
     
-    public func createTask(text: String, date: Date, reminder: Date? = nil) {
+    // MARK: - Task Methods
+    
+    public func createTask(text: String, date: Date, tag: Tag) {
         guard let taskEntity = NSEntityDescription.entity(forEntityName: "Task", in: context) else {
             return
         }
@@ -21,7 +23,8 @@ public final class StorageManager {
         task.id = UUID()
         task.text = text
         task.date = date
-        task.reminder = reminder
+        task.tag = tag
+        task.reminder = nil
         task.isCompleted = false
         task.isInTrash = false
         
@@ -102,7 +105,11 @@ public final class StorageManager {
         return [todayTasks, tomorrowTasks, weekTasks, futureTasks]
     }
     
-    public func updateTask(with id: UUID, newText: String?, newDate: Date?, newReminder: Date?) {
+    public func updateTask(with id: UUID,
+                           newText: String? = nil,
+                           newDate: Date? = nil,
+                           newReminder: Date? = nil,
+                           newTag: Tag? = nil) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
@@ -115,6 +122,9 @@ public final class StorageManager {
             }
             if let newDate = newDate {
                 task.date = newDate
+            }
+            if let newTag = newTag {
+                task.tag = newTag
             }
             
             task.reminder = newReminder
@@ -194,6 +204,126 @@ public final class StorageManager {
             guard let tasks = try? context.fetch(fetchRequest) as? [Task],
                   let task = tasks.first else { return }
             task.isInTrash = false
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    // MARK: - Tag Methods
+    
+    public func fillDefaultTags() {
+        let defaults = UserDefaults.standard
+        let defaultTagsKey = "hasFilledDefaultTags"
+        
+        if !defaults.bool(forKey: defaultTagsKey) {
+            guard let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context) else {
+                return
+            }
+            
+            let defaultTags = ["Работа": "BlueColor",
+                               "Учеба": "GreenColor",
+                               "Спорт": "RedColor",
+                               "Дом": "PurpleColor",
+                               "Покупки": "YellowColor"]
+
+            for (tagName, tagColor) in defaultTags {
+                let newTag = Tag(entity: tagEntity, insertInto: context)
+                newTag.id = UUID()
+                newTag.name = tagName
+                newTag.color = tagColor
+            }
+            
+            appDelegate.saveContext()
+            
+            defaults.set(true, forKey: defaultTagsKey)
+        }
+    }
+    
+    public func createTag(name: String, color: String) {
+        guard let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context) else {
+            return
+        }
+        
+        let tag = Tag(entity: tagEntity, insertInto: context)
+        tag.id = UUID()
+        tag.name = name
+        tag.color = color
+        
+        appDelegate.saveContext()
+    }
+    
+    public func fetchTags() -> [Tag] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        
+        do {
+            return (try? context.fetch(fetchRequest) as? [Tag]) ?? []
+        }
+    }
+    
+    public func fetchTag(with id: UUID) -> Tag? {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let tags = try? context.fetch(fetchRequest) as? [Tag]
+            return tags?.first
+        }
+    }
+    
+    public func updateTag(with id: UUID, newName: String? = nil, newColor: String? = nil) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let tags = try? context.fetch(fetchRequest) as? [Tag],
+                  let tag = tags.first else { return }
+            
+            if let newName = newName {
+                tag.name = newName
+            }
+            if let newColor = newColor {
+                tag.color = newColor
+            }
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    public func deleteTags() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        
+        do {
+            let tags = try? context.fetch(fetchRequest) as? [Tag]
+            tags?.forEach { context.delete($0) }
+        }
+        
+        appDelegate.saveContext()
+    }
+    
+    public func deleteTag(with id: UUID, replaceWith newTag: Tag? = nil) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        let tasksFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        tasksFetchRequest.predicate = NSPredicate(format: "tag.id == %@", id as CVarArg)
+        
+        do {
+            guard let tasks = try? context.fetch(tasksFetchRequest) as? [Task]
+            else { return }
+            
+            if let replacementTag = newTag {
+                for task in tasks {
+                    task.tag = replacementTag
+                }
+            } else {
+                for task in tasks {
+                    context.delete(task)
+                }
+            }
+            
+            guard let tags = try? context.fetch(fetchRequest) as? [Tag],
+                  let tag = tags.first else { return }
+            context.delete(tag)
         }
         
         appDelegate.saveContext()

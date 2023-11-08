@@ -8,13 +8,14 @@ class AddFormViewController: UIViewController {
     
     // MARK: - Properties
     let addButton = UIButton()
-    var onAddButtonTapped: ((String, Date) -> Void)?
+    var onAddButtonTapped: ((String, Date, Tag) -> Void)?
     
     let datePickerViewController = DatePickerViewController()
     let dateView = UIView()
     let dateImage = UIImageView(image: UIImage(systemName: "calendar"))
     let dateLabel = UILabel()
     var taskDate: Date?
+    var tag: Tag?
     
     private var formViewHeightConstraint: NSLayoutConstraint?
     private var formViewBottomConstraint: NSLayoutConstraint?
@@ -28,11 +29,34 @@ class AddFormViewController: UIViewController {
         return view
     }()
     
+    private lazy var formFooterView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
     private lazy var dimmedView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
         view.alpha = dimmedAlpha
         return view
+    }()
+    
+    private lazy var tagView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 8
+        view.layer.borderWidth = 0.7
+        view.layer.borderColor = UIColor.black.cgColor
+        return view
+    }()
+    
+    private lazy var tagLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.text = "Тэг"
+        label.font = UIFont.systemFont(ofSize: 17)
+        return label
     }()
     
     private lazy var buttonsStackView: UIStackView = {
@@ -119,7 +143,17 @@ class AddFormViewController: UIViewController {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.delegate = self
         
-        view.addSubview(buttonsStackView)
+        tagView.addGestureRecognizer(tagTapGestureRecognizer)
+        tagView.addSubview(tagLabel)
+        tagLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(formFooterView)
+        formFooterView.translatesAutoresizingMaskIntoConstraints = false
+        
+        formFooterView.addSubview(tagView)
+        tagView.translatesAutoresizingMaskIntoConstraints = false
+        
+        formFooterView.addSubview(buttonsStackView)
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(separatorLine)
@@ -135,9 +169,25 @@ class AddFormViewController: UIViewController {
             separatorLine.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
             separatorLine.heightAnchor.constraint(equalToConstant: 0.5),
             
-            buttonsStackView.bottomAnchor.constraint(equalTo: formView.safeAreaLayoutGuide.bottomAnchor),
-            buttonsStackView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
-            buttonsStackView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            formFooterView.bottomAnchor.constraint(equalTo: formView.safeAreaLayoutGuide.bottomAnchor),
+            formFooterView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            formFooterView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            formFooterView.heightAnchor.constraint(equalToConstant: 44),
+            
+            tagView.centerYAnchor.constraint(equalTo: buttonsStackView.centerYAnchor),
+            tagView.leadingAnchor.constraint(equalTo: formFooterView.leadingAnchor, constant: 16),
+            tagView.widthAnchor.constraint(lessThanOrEqualTo: formFooterView.widthAnchor, multiplier: 0.4),
+            tagView.heightAnchor.constraint(equalToConstant: 28),
+            
+            tagLabel.leadingAnchor.constraint(equalTo: tagView.leadingAnchor, constant: 12),
+            tagLabel.trailingAnchor.constraint(equalTo: tagView.trailingAnchor, constant: -12),
+            tagLabel.topAnchor.constraint(equalTo: tagView.topAnchor, constant: 4),
+            tagLabel.bottomAnchor.constraint(equalTo: tagView.bottomAnchor, constant: -4),
+            tagLabel.centerYAnchor.constraint(equalTo: tagView.centerYAnchor),
+            
+            buttonsStackView.bottomAnchor.constraint(equalTo: formFooterView.safeAreaLayoutGuide.bottomAnchor),
+            buttonsStackView.leadingAnchor.constraint(equalTo: tagView.trailingAnchor, constant: 16),
+            buttonsStackView.trailingAnchor.constraint(equalTo: formFooterView.trailingAnchor),
             buttonsStackView.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
@@ -153,8 +203,6 @@ class AddFormViewController: UIViewController {
         if let resizedImage = UIImage(systemName: "arrow.up.circle.fill")?.resize(to: CGSize(width: 28, height: 28)) {
             addButton.setImage(resizedImage, for: .normal)
         }
-
-        
         
         [dateImage, dateLabel].forEach {
             dateView.addSubview($0)
@@ -176,8 +224,8 @@ class AddFormViewController: UIViewController {
     @objc private func addButtonTapped() {
         let date = datePickerViewController.get()
         
-        if let taskText = textView.text {
-            onAddButtonTapped?(taskText, date)
+        if let taskText = textView.text, let taskTag = tag {
+            onAddButtonTapped?(taskText, date, taskTag)
         }
         
         animateDismissView()
@@ -198,6 +246,21 @@ class AddFormViewController: UIViewController {
     
     private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateButtonTapped))
+        return tapGesture
+    }()
+    
+    @objc private func tagViewTapped() {
+        let tagListViewController = TagListViewController()
+        tagListViewController.modalPresentationStyle = .formSheet
+        present(tagListViewController, animated: true)
+        tagListViewController.tagSelected = { [weak self] tag in
+            self?.tag = tag
+            self?.updateTagView()
+        }
+    }
+    
+    private lazy var tagTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tagViewTapped))
         return tapGesture
     }()
 
@@ -271,6 +334,14 @@ class AddFormViewController: UIViewController {
     
     private func updateDateLabel() {
         dateLabel.text = formattedDate(from: taskDate ?? Date())
+    }
+    
+    private func updateTagView() {
+        tagView.backgroundColor = UIColor(named: tag?.color ?? "")
+        tagView.layer.borderWidth = 0
+        tagLabel.textColor = .white
+        tagLabel.text = tag?.name
+        tagView.layoutIfNeeded()
     }
     
     // MARK: - Gesture methods

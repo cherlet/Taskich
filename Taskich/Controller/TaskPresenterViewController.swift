@@ -5,11 +5,13 @@ class TaskPresenterViewController: UIViewController {
     // MARK: - Properties
     let datePickerViewController = DatePickerViewController()
     let timePickerViewController = TimePickerViewController()
-    var onTaskTextUpdate: ((String, Date, Date?) -> Void)?
+    var onTaskTextUpdate: ((String, Date, Date?, Tag) -> Void)?
     
     var taskText: String?
     var taskDate: Date?
     var taskReminder: Date?
+    
+    var tag: Tag?
     
     //MARK: - UI Components
     let textView: UITextView = {
@@ -20,6 +22,21 @@ class TaskPresenterViewController: UIViewController {
         tv.textContainerInset = .zero
         tv.returnKeyType = .done
         return tv
+    }()
+    
+    private lazy var tagView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(named: tag?.color ?? "")
+        view.layer.cornerRadius = 8
+        return view
+    }()
+    
+    private lazy var tagLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.text = tag?.name
+        label.font = UIFont.systemFont(ofSize: 17)
+        return label
     }()
     
     let dateView = TaskPresenterFieldView(text: "", image: "calendar")
@@ -34,7 +51,7 @@ class TaskPresenterViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(false)
         if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder)
+            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder, tag!)
         }
     }
     
@@ -42,6 +59,7 @@ class TaskPresenterViewController: UIViewController {
     func setupView() {
         view.backgroundColor = .white
         
+        tagView.addGestureRecognizer(tagTapGestureRecognizer)
         dateView.addGestureRecognizer(dateTapGestureRecognizer)
         reminderView.addGestureRecognizer(reminderTapGestureRecognizer)
         reminderView.deleteButton.addTarget(self, action: #selector(reminderDeleteButtonTapped), for: .touchUpInside)
@@ -51,8 +69,11 @@ class TaskPresenterViewController: UIViewController {
 
         textView.delegate = self
         textView.text = taskText
+        
+        tagView.addSubview(tagLabel)
+        tagLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        [textView, dateView, reminderView].forEach {
+        [textView, tagView, dateView, reminderView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -61,10 +82,20 @@ class TaskPresenterViewController: UIViewController {
             textView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            tagView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 24),
+            tagView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tagView.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
+            
+            tagLabel.leadingAnchor.constraint(equalTo: tagView.leadingAnchor, constant: 12),
+            tagLabel.trailingAnchor.constraint(equalTo: tagView.trailingAnchor, constant: -12),
+            tagLabel.topAnchor.constraint(equalTo: tagView.topAnchor, constant: 4),
+            tagLabel.bottomAnchor.constraint(equalTo: tagView.bottomAnchor, constant: -4),
+            tagLabel.centerYAnchor.constraint(equalTo: tagView.centerYAnchor),
 
             dateView.widthAnchor.constraint(equalTo: view.widthAnchor),
             dateView.heightAnchor.constraint(equalToConstant: 32),
-            dateView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20),
+            dateView.topAnchor.constraint(equalTo: tagView.bottomAnchor, constant: 16),
             dateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             dateView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
@@ -75,10 +106,6 @@ class TaskPresenterViewController: UIViewController {
             reminderView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-    
-    func setupProperties() {
-        
-    }
         
     // MARK: - Gesture methods
     private lazy var dateTapGestureRecognizer: UITapGestureRecognizer = {
@@ -88,6 +115,11 @@ class TaskPresenterViewController: UIViewController {
     
     private lazy var reminderTapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(reminderViewTapped))
+        return tapGesture
+    }()
+    
+    private lazy var tagTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tagViewTapped))
         return tapGesture
     }()
     
@@ -114,6 +146,16 @@ class TaskPresenterViewController: UIViewController {
     @objc private func reminderDeleteButtonTapped() {
         reminderView.deleteReminderLabel()
         self.taskReminder = nil
+    }
+    
+    @objc private func tagViewTapped() {
+        let tagListViewController = TagListViewController()
+        tagListViewController.modalPresentationStyle = .formSheet
+        present(tagListViewController, animated: true)
+        tagListViewController.tagSelected = { [weak self] tag in
+            self?.tag = tag
+            self?.updateTagView()
+        }
     }
     
     // MARK: - Helper methods
@@ -150,6 +192,13 @@ class TaskPresenterViewController: UIViewController {
         guard let reminder = taskReminder else { return }
         reminderView.updateReminderLabel(formattedTime(from: reminder))
     }
+    
+    private func updateTagView() {
+        tagView.backgroundColor = UIColor(named: tag?.color ?? "")
+        tagLabel.textColor = .white
+        tagLabel.text = tag?.name
+        tagView.layoutIfNeeded()
+    }
 }
 
 // MARK: - TextView Delegate
@@ -174,7 +223,7 @@ extension TaskPresenterViewController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder)
+            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder, tag!)
             dismiss(animated: true)
         }
     }

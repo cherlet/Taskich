@@ -48,6 +48,24 @@ class ContainerViewController: UIViewController {
         func updateTrash() {
             trashViewController.updateData()
         }
+    
+    // MARK: - Menu interaction
+    private lazy var swipeOpenMenu: UISwipeGestureRecognizer = {
+        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didTapMenuButton))
+        gestureRecognizer.direction = .right
+        return gestureRecognizer
+    }()
+    
+    private lazy var swipeCloseMenu: UISwipeGestureRecognizer = {
+        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(closeMenu))
+        gestureRecognizer.direction = .left
+        return gestureRecognizer
+    }()
+    
+    private lazy var tapCloseMenu: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(closeMenu))
+        return tapGesture
+    }()
 }
 
 // MARK: - TaskListVC Delegate
@@ -110,5 +128,10 @@ extension ContainerViewController: MenuViewControllerDelegate {
         barItem.tintColor = .black
         
         vc.navigationItem.leftBarButtonItem = barItem
+        
+        vc.view.addGestureRecognizer(swipeOpenMenu)
+        vc.view.addGestureRecognizer(swipeCloseMenu)
+        vc.view.addGestureRecognizer(tapCloseMenu)
     }
+    
 }

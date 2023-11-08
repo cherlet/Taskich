@@ -8,6 +8,7 @@ protocol TaskListViewControllerDelegate: AnyObject {
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
     
     var tasks = [[Task]]()
+    var tags = [Tag]()
     var isEditingMode = false
     var selectedRows = Set<IndexPath>()
     var editModeToolbar = EditModeToolbarView()
@@ -20,11 +21,12 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         
         view.addGestureRecognizer(swipeOpenMenu)
         view.addGestureRecognizer(swipeCloseMenu)
-        view.addGestureRecognizer(tapCloseMenu)
+        //view.addGestureRecognizer(tapCloseMenu)
         setupTableView()
         setupNavigationBar()
         setupEditModeToolbar()
         updateData()
+        updateTagData()
     }
     
     // MARK: - Setup methods
@@ -87,6 +89,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    func updateTagData() {
+        tags = StorageManager.shared.fetchTags()
     }
     
     // MARK: - Table view data source
@@ -231,9 +237,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         addFormController.modalPresentationStyle = .overCurrentContext
         present(addFormController, animated: false)
         
-        addFormController.onAddButtonTapped = { taskText, date in
+        addFormController.onAddButtonTapped = { taskText, date, tag in
             if !taskText.isEmpty {
-                StorageManager.shared.createTask(text: taskText, date: date)
+                StorageManager.shared.createTask(text: taskText, date: date, tag: tag)
                 self.updateData()
             }
         }
@@ -246,12 +252,13 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         presenterViewController.taskText = tasks[indexPath.section][indexPath.row].text
         presenterViewController.taskDate = tasks[indexPath.section][indexPath.row].date
         presenterViewController.taskReminder = tasks[indexPath.section][indexPath.row].reminder
+        presenterViewController.tag = tasks[indexPath.section][indexPath.row].tag
         
         let taskID = tasks[indexPath.section][indexPath.row].id
         let tempReminder = tasks[indexPath.section][indexPath.row].reminder
         
-        presenterViewController.onTaskTextUpdate = { text, date, reminder in
-            StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date, newReminder: reminder)
+        presenterViewController.onTaskTextUpdate = { text, date, reminder, tag in
+            StorageManager.shared.updateTask(with: taskID, newText: text, newDate: date, newReminder: reminder, newTag: tag)
             self.updateData()
             
             guard let tempTask = StorageManager.shared.fetchTask(with: taskID) else { return }
