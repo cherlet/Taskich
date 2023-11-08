@@ -4,12 +4,29 @@ class TagListViewController: UIViewController {
     // MARK: - Properties
     var tags = [Tag]()
     var tagSelected: ((Tag) -> Void)?
+    var onDismiss: (() -> Void)?
     
     private let tableView: UITableView = {
         let table = UITableView()
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         table.separatorStyle = .none
         return table
+    }()
+    
+    private lazy var formView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 16
+        view.clipsToBounds = true
+        view.alpha = 0
+        return view
+    }()
+    
+    private lazy var dimmedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0
+        return view
     }()
     
     // MARK: - Lifecycle
@@ -19,21 +36,43 @@ class TagListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         setupView()
+        setupTableView()
         updateData()
     }
     
     // MARK: - Setup Methods
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .clear
         
-        view.addSubview(tableView)
+        dimmedView.addGestureRecognizer(tapGestureRecognizer)
+        
+        [dimmedView, formView].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        NSLayoutConstraint.activate([
+            formView.widthAnchor.constraint(equalToConstant: 360),
+            formView.heightAnchor.constraint(equalToConstant: 360),
+            formView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            formView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            dimmedView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimmedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+    
+    private func setupTableView() {
+        formView.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.topAnchor.constraint(equalTo: formView.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: formView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: formView.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: formView.bottomAnchor)
         ])
     }
     
@@ -44,13 +83,43 @@ class TagListViewController: UIViewController {
             self.tableView.reloadData()
         }
     }
+    
+    // MARK: - Animations/actions
+    func appear(sender: UIViewController) {
+        sender.present(self, animated: false) {
+            self.show()
+        }
+    }
+    
+    private func show() {
+        UIView.animate(withDuration: 0.15) {
+            self.dimmedView.alpha = 0.6
+            self.formView.alpha = 1
+        }
+    }
+    
+    @objc private func hide() {
+        UIView.animate(withDuration: 0.15) {
+            self.dimmedView.alpha = 0
+            self.formView.alpha = 0
+        } completion: { _ in
+            self.dismiss(animated: false)
+            self.onDismiss?()
+            self.removeFromParent()
+        }
+    }
+    
+    private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hide))
+        return tapGesture
+    }()
 }
 
 // MARK: - UITableViewDelegate
 extension TagListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tagSelected?(tags[indexPath.row])
-        dismiss(animated: true)
+        hide()
     }
 }
 

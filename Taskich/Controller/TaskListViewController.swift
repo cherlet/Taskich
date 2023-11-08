@@ -8,7 +8,6 @@ protocol TaskListViewControllerDelegate: AnyObject {
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
     
     var tasks = [[Task]]()
-    var tags = [Tag]()
     var isEditingMode = false
     var selectedRows = Set<IndexPath>()
     var editModeToolbar = EditModeToolbarView()
@@ -19,14 +18,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addGestureRecognizer(swipeOpenMenu)
-        view.addGestureRecognizer(swipeCloseMenu)
-        //view.addGestureRecognizer(tapCloseMenu)
         setupTableView()
         setupNavigationBar()
         setupEditModeToolbar()
         updateData()
-        updateTagData()
     }
     
     // MARK: - Setup methods
@@ -56,13 +51,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             addTaskButton.tintColor = .black
             navigationItem.rightBarButtonItem = addTaskButton
         }
-        
-        let menuButton = UIBarButtonItem(image: UIImage(systemName: "list.dash"),
-                                         style: .done,
-                                         target: self,
-                                         action: #selector(didTapMenuButton))
-        menuButton.tintColor = .black
-        navigationItem.leftBarButtonItem = menuButton
     }
     
     private func setupEditModeToolbar() {
@@ -89,10 +77,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
-    }
-    
-    func updateTagData() {
-        tags = StorageManager.shared.fetchTags()
     }
     
     // MARK: - Table view data source
@@ -276,23 +260,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
         delegate?.closeMenu()
     }
     
-    private lazy var swipeOpenMenu: UISwipeGestureRecognizer = {
-        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didTapMenuButton))
-        gestureRecognizer.direction = .right
-        return gestureRecognizer
-    }()
-    
-    private lazy var swipeCloseMenu: UISwipeGestureRecognizer = {
-        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(closeMenu))
-        gestureRecognizer.direction = .left
-        return gestureRecognizer
-    }()
-    
-    private lazy var tapCloseMenu: UITapGestureRecognizer = {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(closeMenu))
-        return tapGesture
-    }()
-    
     // MARK: - Other Methods
     private func configureNotification(previousReminder: Date?, task: Task) {
         if previousReminder == nil && task.reminder != nil {
@@ -453,10 +420,10 @@ extension TaskListViewController {
         
         var title: String {
             switch self {
-            case .today: return "Сегодня"
-            case .tomorrow: return "Завтра"
-            case .week: return "На неделе"
-            case .future: return "Потом"
+            case .today: return "СЕГОДНЯ"
+            case .tomorrow: return "ЗАВТРА"
+            case .week: return "НА НЕДЕЛЕ"
+            case .future: return "ПОТОМ"
             }
         }
     }
@@ -479,6 +446,8 @@ extension TaskListViewController {
         return TaskDates(today: today, tomorrow: tomorrow, onWeek: onWeek, nextWeek: nextWeek)
     }
 }
+
+
 
 
 

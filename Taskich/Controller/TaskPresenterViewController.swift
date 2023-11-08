@@ -50,8 +50,8 @@ class TaskPresenterViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(false)
-        if let taskText = textView.text, !taskText.isEmpty {
-            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder, tag!)
+        if let taskText = textView.text, !taskText.isEmpty, let tagLabel = tag {
+            onTaskTextUpdate?(taskText, taskDate ?? Date(), taskReminder, tagLabel)
         }
     }
     
@@ -150,8 +150,8 @@ class TaskPresenterViewController: UIViewController {
     
     @objc private func tagViewTapped() {
         let tagListViewController = TagListViewController()
-        tagListViewController.modalPresentationStyle = .formSheet
-        present(tagListViewController, animated: true)
+        tagListViewController.modalPresentationStyle = .overFullScreen
+        tagListViewController.appear(sender: self)
         tagListViewController.tagSelected = { [weak self] tag in
             self?.tag = tag
             self?.updateTagView()

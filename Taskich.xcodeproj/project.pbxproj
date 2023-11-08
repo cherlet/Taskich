@@ -29,6 +29,7 @@
 		0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */; };
 		0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */; };
 		07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */; };
+		074B21DE2AFBD0AC0014DEC8 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */; };
 		075DD2C22AFA47E0002DB3C4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075DD2C12AFA47E0002DB3C4 /* NotificationManager.swift */; };
 		077E090F2AF6DA0300F9AC16 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 077E090D2AF6DA0300F9AC16 /* CoreData.xcdatamodeld */; };
 		07BA390F2AFB8700009ECE95 /* CustomColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BA390E2AFB8700009ECE95 /* CustomColor.swift */; };
@@ -60,6 +61,7 @@
 		0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeletedTaskCell.swift; sourceTree = "<group>"; };
 		0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterFieldView.swift; sourceTree = "<group>"; };
+		074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItemView.swift; sourceTree = "<group>"; };
 		075DD2C12AFA47E0002DB3C4 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		077E090E2AF6DA0300F9AC16 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		07BA390E2AFB8700009ECE95 /* CustomColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColor.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				0717C8A42AF2E98B00D29342 /* EditModeToolbarView.swift */,
 				0717C8A22AF2E98B00D29342 /* WeekdaysHeaderView.swift */,
 				07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */,
+				074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */,
 				07BA390E2AFB8700009ECE95 /* CustomColor.swift */,
 				0717C8A12AF2E96400D29342 /* Cells */,
 			);
@@ -278,6 +281,7 @@
 				0717C8A72AF2E98B00D29342 /* EditModeToolbarView.swift in Sources */,
 				0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */,
 				0717C8A52AF2E98B00D29342 /* WeekdaysHeaderView.swift in Sources */,
+				074B21DE2AFBD0AC0014DEC8 /* MenuItemView.swift in Sources */,
 				07BA39112AFB8934009ECE95 /* Tag.swift in Sources */,
 				0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */,
 				07D077342AF7F8610030DB86 /* TimePickerViewController.swift in Sources */,

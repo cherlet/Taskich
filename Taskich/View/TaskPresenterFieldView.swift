@@ -29,7 +29,7 @@ class TaskPresenterFieldView: UIView {
             addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+    
         NSLayoutConstraint.activate([
             image.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             image.centerYAnchor.constraint(equalTo: centerYAnchor),

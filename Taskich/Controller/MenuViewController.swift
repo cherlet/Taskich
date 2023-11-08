@@ -1,43 +1,68 @@
 import UIKit
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func didSelect(menuItem: MenuViewController.MenuOptions)
+    func didSelect(menuItem: Int)
 }
 
 class MenuViewController: UIViewController {
     // MARK: - Properties
-    enum MenuOptions: String, CaseIterable {
-        case tasks = "Задачи"
-        case archive = "Архив"
-        case trash = "Корзина"
-        
-        var imageName: String {
-            switch self {
-            case .tasks:
-                return "bookmark"
-            case .archive:
-                return "archivebox"
-            case .trash:
-                return "trash"
-            }
-        }
-    }
-
     weak var delegate: MenuViewControllerDelegate?
     
-    private let tableView: UITableView = {
-        let table = UITableView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        table.separatorStyle = .none
-        return table
+    private lazy var tasks: MenuItemView = {
+        let item = MenuItemView()
+        item.image.image = UIImage(systemName: "bookmark")
+        item.label.text = "Главный экран"
+        item.setupView()
+        return item
+    }()
+    
+    private lazy var archive: MenuItemView = {
+        let item = MenuItemView()
+        item.image.image = UIImage(systemName: "archivebox")
+        item.label.text = "Архив"
+        item.setupView()
+        return item
+    }()
+    
+    private lazy var trash: MenuItemView = {
+        let item = MenuItemView()
+        item.image.image = UIImage(systemName: "trash")
+        item.label.text = "Корзина"
+        item.setupView()
+        return item
+    }()
+    
+    private lazy var tags: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private lazy var tagsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Тэги"
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .gray
+        return label
+    }()
+    
+    private lazy var tagsButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "plus"), for: .normal)
+        button.tintColor = .gray
+        button.addTarget(self, action: #selector(tagAddButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var separatorLine: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        return view
     }()
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
-        tableView.dataSource = self
         setupView()
     }
     
@@ -45,39 +70,78 @@ class MenuViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .white
         
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tasks.addGestureRecognizer(tasksTapGestureRecognizer)
+        archive.addGestureRecognizer(archiveTapGestureRecognizer)
+        trash.addGestureRecognizer(trashGestureRecognizer)
+        
+        // tags config
+        [tagsLabel, tagsButton].forEach {
+            tags.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tagsLabel.leadingAnchor.constraint(equalTo: tags.leadingAnchor, constant: 16),
+            tagsLabel.centerYAnchor.constraint(equalTo: tags.centerYAnchor),
+            
+            tagsButton.trailingAnchor.constraint(equalTo: tags.trailingAnchor, constant: -32),
+            tagsButton.centerYAnchor.constraint(equalTo: tags.centerYAnchor)
+        ])
+        
+        // menu config
+        [tasks, archive, tags, trash].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+            $0.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -120).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        }
+        
+        view.addSubview(separatorLine)
+        separatorLine.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            tasks.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            archive.topAnchor.constraint(equalTo: tasks.bottomAnchor, constant: 8),
+            tags.topAnchor.constraint(equalTo: archive.bottomAnchor, constant: 8),
+            
+            trash.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            
+            separatorLine.heightAnchor.constraint(equalToConstant: 0.5),
+            separatorLine.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            separatorLine.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -120),
+            separatorLine.bottomAnchor.constraint(equalTo: trash.topAnchor, constant: -16)
         ])
     }
-}
-
-// MARK: - UITableViewDelegate
-extension MenuViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = MenuOptions.allCases[indexPath.row]
-        delegate?.didSelect(menuItem: item)
-    }
-}
-
-// MARK: - UITableViewDataSource
-extension MenuViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return MenuOptions.allCases.count
+    
+    private lazy var tasksTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tasksViewTapped))
+        return tapGesture
+    }()
+    
+    private lazy var archiveTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(archiveViewTapped))
+        return tapGesture
+    }()
+    
+    private lazy var trashGestureRecognizer: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(trashViewTapped))
+        return tapGesture
+    }()
+    
+    @objc private func tasksViewTapped() {
+        delegate?.didSelect(menuItem: 0)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = MenuOptions.allCases[indexPath.row].rawValue
-        cell.textLabel?.textColor = .black
-        cell.imageView?.image = UIImage(systemName: MenuOptions.allCases[indexPath.row].imageName)
-        cell.imageView?.tintColor = .black
-        return cell
+    @objc private func archiveViewTapped() {
+        delegate?.didSelect(menuItem: 1)
+    }
+    
+    @objc private func trashViewTapped() {
+        delegate?.didSelect(menuItem: 2)
+    }
+    
+    @objc private func tagAddButtonTapped() {
+        print("LETS GOOOOOOOOOOO")
     }
 }

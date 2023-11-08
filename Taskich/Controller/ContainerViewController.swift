@@ -19,6 +19,8 @@ class ContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addChildViewController()
+        configureGestures()
+        configureNavigationBar()
     }
     
     // MARK: - Setup methods
@@ -50,6 +52,32 @@ class ContainerViewController: UIViewController {
         }
     
     // MARK: - Menu interaction
+    private func configureGestures() {
+        view.addGestureRecognizer(swipeOpenMenu)
+        view.addGestureRecognizer(swipeCloseMenu)
+    }
+    
+    private func configureNavigationBar() {
+        let barItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"), style: .done, target: self, action: #selector(didTapMenuButton))
+        barItem.tintColor = .black
+        
+        [taskListViewController, archiveViewController, trashViewController].forEach {
+            $0.navigationItem.leftBarButtonItem = barItem
+        }
+        
+        let settingsBarItem = UIBarButtonItem(image: UIImage(systemName: "gear"),
+                                      style: .done,
+                                      target: self,
+                                      action: #selector(didSettingsButtonTapped))
+        
+        settingsBarItem.tintColor = .gray
+        menuViewController.navigationItem.leftBarButtonItem = settingsBarItem
+    }
+    
+    @objc private func didSettingsButtonTapped() {
+        print("SEETINGS")
+    }
+    
     private lazy var swipeOpenMenu: UISwipeGestureRecognizer = {
         let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didTapMenuButton))
         gestureRecognizer.direction = .right
@@ -86,7 +114,7 @@ extension ContainerViewController: TaskListViewControllerDelegate {
         switch menuState {
         case .closed:
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
-                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 160
+                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 120
             } completion: { [weak self] done in
                 if done {
                     self?.menuState = .opened
@@ -109,29 +137,23 @@ extension ContainerViewController: TaskListViewControllerDelegate {
 
 // MARK: - MenuVC Delegate
 extension ContainerViewController: MenuViewControllerDelegate {
-    func didSelect(menuItem: MenuViewController.MenuOptions) {
+    func didSelect(menuItem: Int) {
         toggleMenu(completion: nil)
             switch menuItem {
-            case .tasks:
+            case 0:
                 self.setViewController(to: self.taskListViewController)
-            case .archive:
+            case 1:
                 self.setViewController(to: self.archiveViewController)
-            case .trash:
+            case 2:
                 self.setViewController(to: self.trashViewController)
+            default:
+                return
             }
     }
     
     private func setViewController(to vc: UIViewController?) {
         guard let vc = vc else { return }
         navigationViewController?.setViewControllers([vc], animated: false)
-        let barItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"), style: .done, target: self, action: #selector(didTapMenuButton))
-        barItem.tintColor = .black
-        
-        vc.navigationItem.leftBarButtonItem = barItem
-        
-        vc.view.addGestureRecognizer(swipeOpenMenu)
-        vc.view.addGestureRecognizer(swipeCloseMenu)
-        vc.view.addGestureRecognizer(tapCloseMenu)
     }
     
 }

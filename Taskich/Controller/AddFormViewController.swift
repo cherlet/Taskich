@@ -251,12 +251,16 @@ class AddFormViewController: UIViewController {
     
     @objc private func tagViewTapped() {
         let tagListViewController = TagListViewController()
-        tagListViewController.modalPresentationStyle = .formSheet
-        present(tagListViewController, animated: true)
+        textView.resignFirstResponder()
+        tagListViewController.modalPresentationStyle = .overFullScreen
+        tagListViewController.onDismiss = { [weak self] in
+            self?.textView.becomeFirstResponder()
+        }
         tagListViewController.tagSelected = { [weak self] tag in
             self?.tag = tag
             self?.updateTagView()
         }
+        tagListViewController.appear(sender: self)
     }
     
     private lazy var tagTapGestureRecognizer: UITapGestureRecognizer = {
