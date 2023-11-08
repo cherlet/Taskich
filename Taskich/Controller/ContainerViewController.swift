@@ -56,11 +56,19 @@ extension ContainerViewController: TaskListViewControllerDelegate {
         toggleMenu(completion: nil)
     }
     
+    @objc func closeMenu() {
+        if menuState == .opened {
+            toggleMenu(completion: nil)
+        } else {
+            return
+        }
+    }
+    
     func toggleMenu(completion: (() -> Void)?) {
         switch menuState {
         case .closed:
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut) {
-                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 220
+                self.navigationViewController?.view.frame.origin.x = self.taskListViewController.view.frame.size.width - 160
             } completion: { [weak self] done in
                 if done {
                     self?.menuState = .opened

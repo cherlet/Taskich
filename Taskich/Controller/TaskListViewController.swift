@@ -2,6 +2,7 @@ import UIKit
 
 protocol TaskListViewControllerDelegate: AnyObject {
     func didTapMenuButton()
+    func closeMenu()
 }
 
 class TaskListViewController: UITableViewController,  UITableViewDragDelegate, UITableViewDropDelegate {
@@ -17,6 +18,9 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.addGestureRecognizer(swipeOpenMenu)
+        view.addGestureRecognizer(swipeCloseMenu)
+        view.addGestureRecognizer(tapCloseMenu)
         setupTableView()
         setupNavigationBar()
         setupEditModeToolbar()
@@ -260,6 +264,27 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     @objc private func didTapMenuButton() {
         delegate?.didTapMenuButton()
     }
+    
+    @objc private func closeMenu() {
+        delegate?.closeMenu()
+    }
+    
+    private lazy var swipeOpenMenu: UISwipeGestureRecognizer = {
+        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didTapMenuButton))
+        gestureRecognizer.direction = .right
+        return gestureRecognizer
+    }()
+    
+    private lazy var swipeCloseMenu: UISwipeGestureRecognizer = {
+        let gestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(closeMenu))
+        gestureRecognizer.direction = .left
+        return gestureRecognizer
+    }()
+    
+    private lazy var tapCloseMenu: UITapGestureRecognizer = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(closeMenu))
+        return tapGesture
+    }()
     
     // MARK: - Other Methods
     private func configureNotification(previousReminder: Date?, task: Task) {
