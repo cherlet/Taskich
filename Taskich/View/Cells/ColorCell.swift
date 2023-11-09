@@ -11,6 +11,7 @@ class ColorCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(colorView)
+        backgroundColor = .appBackground
         colorView.translatesAutoresizingMaskIntoConstraints = false
         colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
@@ -23,8 +24,8 @@ class ColorCell: UICollectionViewCell {
     }
     
     func configure(with color: UIColor, isSelected: Bool) {
-        colorView.backgroundColor = color
+        colorView.backgroundColor = isSelected ? .appBackground : color
         colorView.layer.borderWidth = isSelected ? 3 : 0
-        colorView.layer.borderColor = isSelected ? UIColor.white.cgColor : nil
+        colorView.layer.borderColor = isSelected ? color.cgColor : nil
     }
 }

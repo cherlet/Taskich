@@ -7,14 +7,16 @@ class TrashViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView()
         table.separatorStyle = .none
+        table.backgroundColor = .appBackground
         return table
     }()
     
     private lazy var deleteAllButton: UIButton = {
         let button = UIButton()
         button.setTitle("Очистить корзину", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .red
+        button.setTitleColor(.appDelete, for: .normal)
+        button.setTitleColor(.appGray, for: .disabled)
+        button.backgroundColor = .appDelete.withAlphaComponent(0.2)
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(deleteAllTasks), for: .touchUpInside)
         return button
@@ -28,12 +30,14 @@ class TrashViewController: UIViewController {
         tableView.dataSource = self
         setupView()
         updateData()
+        updateButtonState(trashTasks)
+        view.backgroundColor = .appBackground
     }
     
     // MARK: - Setup Methods
     private func setupView() {
         title = "Корзина"
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
     
         [deleteAllButton, tableView].forEach {
             view.addSubview($0)
@@ -72,6 +76,7 @@ class TrashViewController: UIViewController {
                 StorageManager.shared.deleteTask(with: id)
             }
             self?.updateData()
+            self?.updateButtonState([])
         }
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
         
@@ -84,6 +89,13 @@ class TrashViewController: UIViewController {
         }
         
         present(actionSheet, animated: true, completion: nil)
+    }
+    
+    private func updateButtonState(_ tasks: [Task]) {
+        if tasks.isEmpty {
+            deleteAllButton.isEnabled = false
+            deleteAllButton.backgroundColor = .appGray.withAlphaComponent(0.2)
+        }
     }
 }
 

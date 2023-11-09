@@ -6,7 +6,7 @@ class TimePickerViewController: UIViewController {
     
     private lazy var formView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
         view.alpha = 0
@@ -30,33 +30,33 @@ class TimePickerViewController: UIViewController {
     
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .gray
+        label.textColor = .appGray
         return label
     }()
     
     private lazy var submitButton: UIButton = {
         let button = UIButton()
         button.setTitle("Сохранить", for: .normal)
-        button.setTitleColor(UIColor.systemGreen, for: .normal)
+        button.setTitleColor(.appAccent, for: .normal)
         return button
     }()
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отмена", for: .normal)
-        button.setTitleColor(UIColor.gray, for: .normal)
+        button.setTitleColor(.appGray, for: .normal)
         return button
     }()
     
     private let separatorLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.backgroundColor = .appGray
         return view
     }()
     
     private let verticalSeparatorLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.backgroundColor = .appGray
         return view
     }()
 

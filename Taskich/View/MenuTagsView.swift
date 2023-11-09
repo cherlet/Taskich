@@ -12,6 +12,7 @@ class MenuTagsView: UITableView {
         self.delegate = self
         self.separatorStyle = .none
         updateData()
+        self.backgroundColor = .appBackground
     }
     
     required init?(coder: NSCoder) {

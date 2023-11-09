@@ -43,21 +43,21 @@ class MenuViewController: UIViewController {
         let label = UILabel()
         label.text = "ТЭГИ"
         label.font = UIFont.preferredFont(forTextStyle: .headline).withSize(16)
-        label.textColor = .gray.withAlphaComponent(0.7)
+        label.textColor = .appGray
         return label
     }()
     
     private lazy var tagsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "plus"), for: .normal)
-        button.tintColor = .gray
+        button.tintColor = .appGray
         button.addTarget(self, action: #selector(tagAddButtonTapped), for: .touchUpInside)
         return button
     }()
     
     private lazy var separatorLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.backgroundColor = .appGray
         return view
     }()
     
@@ -67,11 +67,12 @@ class MenuViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupMenuActions()
+        view.backgroundColor = .appBackground
     }
     
     // MARK: - Setup Methods
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         
         tasks.addGestureRecognizer(tasksTapGestureRecognizer)
         archive.addGestureRecognizer(archiveTapGestureRecognizer)
@@ -180,6 +181,7 @@ class MenuViewController: UIViewController {
         tagViewController.onTagUpdated = { text, color in
             StorageManager.shared.updateTag(with: id, newName: text, newColor: color)
             self.menuTagsView.updateData()
+            self.tasksNeedUpdate?()
         }
     }
     

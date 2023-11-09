@@ -6,7 +6,17 @@ class ColorPickerView: UIView, UICollectionViewDataSource, UICollectionViewDeleg
                           "GreenColor",
                           "PurpleColor",
                           "RedColor",
-                          "YellowColor"
+                          "YellowColor",
+                          "ClaretColor",
+                          "GunmetalColor",
+                          "IndigoColor",
+                          "NaplesYellowColor",
+                          "OlivineColor",
+                          "OrangeColor",
+                          "RoseColor",
+                          "SkyBlueColor",
+                          "TiffanyColor",
+                          "TomatoColor",
     ]
     private var selectedColorIndex: IndexPath?
     
@@ -19,7 +29,7 @@ class ColorPickerView: UIView, UICollectionViewDataSource, UICollectionViewDeleg
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
         super.init(frame: frame)
-        
+
         setupCollectionView()
         setupView()
     }
@@ -35,6 +45,7 @@ class ColorPickerView: UIView, UICollectionViewDataSource, UICollectionViewDeleg
         collectionView.register(ColorCell.self, forCellWithReuseIdentifier: "ColorCell")
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.backgroundColor = .appBackground
     }
     
     private func setupView() {

@@ -26,7 +26,7 @@ class TagCell: UITableViewCell {
     
     private lazy var editButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .gray.withAlphaComponent(0.7)
+        button.backgroundColor = .appGray.withAlphaComponent(0.8)
         button.setImage(UIImage(systemName: "pencil"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = buttonSize / 2
@@ -38,7 +38,7 @@ class TagCell: UITableViewCell {
     
     private lazy var deleteButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .red.withAlphaComponent(0.7)
+        button.backgroundColor = .appDelete.withAlphaComponent(0.8)
         button.setImage(UIImage(systemName: "trash.fill"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = buttonSize / 2
@@ -68,6 +68,7 @@ class TagCell: UITableViewCell {
     func configure(tag: Tag) {
         self.taskTag = tag
         self.tagLabel.text = tag.name
+        self.backgroundColor = .appBackground
         circleView.backgroundColor = UIColor(named: tag.color)
         self.selectionStyle = .none
     }

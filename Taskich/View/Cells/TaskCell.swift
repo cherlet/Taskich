@@ -22,14 +22,13 @@ class TaskCell: UITableViewCell {
     
     private lazy var checkmarkButton: UIButton = {
         let button = UIButton()
-        button.tintColor = .black
         button.addTarget(self, action: #selector(checkmarkButtonTapped), for: .touchUpInside)
         return button
     }()
     
     lazy var selectedBackground: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
+        view.backgroundColor = .appAccent.withAlphaComponent(0.2)
         view.layer.cornerRadius = 8
         view.isHidden = true
         return view
@@ -51,6 +50,9 @@ class TaskCell: UITableViewCell {
     func configure(task: Task) {
         self.task = task
         taskLabel.text = task.text
+        let tagColor = task.tag.color
+        checkmarkButton.tintColor = UIColor(named: tagColor)
+        backgroundColor = .appBackground
         updateCheckmarkButton(task.isCompleted)
         self.selectionStyle = .none
         self.checkmarkButton.isSelected = task.isCompleted
@@ -97,7 +99,7 @@ class TaskCell: UITableViewCell {
 
     private func updateCheckmarkButton(_ isCompleted: Bool, completion: (() -> Void)? = nil) {
         let imageName = isCompleted ? "square.slash.fill" : "square"
-        let textColor = isCompleted ? UIColor.lightGray : UIColor.black
+        let textColor = isCompleted ? .appGray : UIColor.appText
         let textAlpha: CGFloat = isCompleted ? 0.5 : 1.0
         
         UIView.animate(withDuration: 0.15, animations: {

@@ -21,6 +21,7 @@ class TaskPresenterViewController: UIViewController {
         tv.textContainer.lineFragmentPadding = 0
         tv.textContainerInset = .zero
         tv.returnKeyType = .done
+        tv.backgroundColor = .appBackground
         return tv
     }()
     
@@ -35,7 +36,7 @@ class TaskPresenterViewController: UIViewController {
         let label = UILabel()
         label.textColor = .white
         label.text = tag?.name
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = UIFont.boldSystemFont(ofSize: 17)
         return label
     }()
     
@@ -57,7 +58,7 @@ class TaskPresenterViewController: UIViewController {
     
     // MARK: - Setup methods
     func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         
         tagView.addGestureRecognizer(tagTapGestureRecognizer)
         dateView.addGestureRecognizer(dateTapGestureRecognizer)

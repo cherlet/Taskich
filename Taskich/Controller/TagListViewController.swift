@@ -12,12 +12,13 @@ class TagListViewController: UIViewController {
         let table = UITableView()
         table.register(TagCell.self, forCellReuseIdentifier: "TagCell")
         table.separatorStyle = .singleLine
+        table.backgroundColor = .appBackground
         return table
     }()
     
     private lazy var formView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
         view.alpha = 0
@@ -33,20 +34,20 @@ class TagListViewController: UIViewController {
     
     private lazy var deleteAllView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         return view
     }()
     
     private lazy var deleteLabel: UILabel = {
         let label = UILabel()
         label.text = "Удалить с задачами"
-        label.textColor = .gray
+        label.textColor = .appGray
         return label
     }()
     
     private lazy var separatorLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.backgroundColor = .appGray
         return view
     }()
     

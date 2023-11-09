@@ -17,7 +17,7 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .appBackground
         setupTableView()
         setupNavigationBar()
         setupEditModeToolbar()
@@ -34,21 +34,21 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
     }
     
     private func setupNavigationBar() {
-        title = "Taskich"
+        title = ""
         
         if isEditingMode {
             let cancelTaskButton = UIBarButtonItem(image: UIImage(systemName: "arrow.left"),
                                                    style: .plain,
                                                    target: self,
                                                    action: #selector(cancelEditing))
-            cancelTaskButton.tintColor = .black
+            cancelTaskButton.tintColor = .appText
             navigationItem.rightBarButtonItem = cancelTaskButton
         } else {
             let addTaskButton = UIBarButtonItem(image: UIImage(systemName: "plus"),
                                                 style: .plain,
                                                 target: self,
                                                 action: #selector(addTask))
-            addTaskButton.tintColor = .black
+            addTaskButton.tintColor = .appText
             navigationItem.rightBarButtonItem = addTaskButton
         }
     }
@@ -153,8 +153,10 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             newDate = taskDates.tomorrow
         case 2:
             newDate = taskDates.onWeek
-        default:
+        case 3:
             newDate = taskDates.nextWeek
+        default:
+            return
         }
         
         if sourceIndexPath.section != destinationIndexPath.section {
@@ -166,6 +168,16 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             tasks[destinationIndexPath.section].insert(movedTask, at: destinationIndexPath.row)
         }
     }
+    
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        
+        if section == 1 {
+            if let headerView = view as? UITableViewHeaderFooterView {
+                headerView.textLabel?.textColor = .appAccent
+            }
+        }
+    }
+
     
     // MARK: - Drag&Drop protocol
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {

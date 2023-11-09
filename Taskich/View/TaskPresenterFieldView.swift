@@ -6,7 +6,7 @@ class TaskPresenterFieldView: UIView {
     lazy var deleteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
-        button.tintColor = .gray
+        button.tintColor = .appGray
         button.isHidden = true
         return button
     }()
@@ -21,9 +21,9 @@ class TaskPresenterFieldView: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .clear
-        image.tintColor = .systemGreen
-        label.textColor = .gray
+        backgroundColor = .appBackground
+        image.tintColor = .appAccent
+        label.textColor = .appGray
         
         [image, label, deleteButton].forEach {
             addSubview($0)
@@ -45,18 +45,18 @@ class TaskPresenterFieldView: UIView {
     
     func updateDateLabel(text: String) {
         self.label.text = text
-        self.label.textColor = .black
+        self.label.textColor = .appText
     }
     
     func updateReminderLabel(_ text: String) {
         self.label.text = text
-        self.label.textColor = .black
+        self.label.textColor = .appText
         self.deleteButton.isHidden = false
     }
     
     func deleteReminderLabel() {
         self.label.text = "Добавить напоминание"
-        self.label.textColor = .gray
+        self.label.textColor = .appGray
         self.deleteButton.isHidden = true
     }
     

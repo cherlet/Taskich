@@ -28,8 +28,8 @@ class EditModeToolbarView: UIStackView {
     }
     
     private func setupView() {
-        let dateButtonContainer = createButtonContainer(for: dateButton, color: UIColor.gray.withAlphaComponent(0.5))
-        let deleteButtonContainer = createButtonContainer(for: deleteButton, color: UIColor.red.withAlphaComponent(0.5))
+        let dateButtonContainer = createButtonContainer(for: dateButton, color: .appGray)
+        let deleteButtonContainer = createButtonContainer(for: deleteButton, color: .appDelete.withAlphaComponent(0.5))
         
         [dateButtonContainer, deleteButtonContainer].forEach {
             addArrangedSubview($0)

@@ -20,7 +20,7 @@ class DeletedTaskCell: UITableViewCell {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "return"), for: .normal)
-        button.tintColor = .systemGreen
+        button.tintColor = .appAccent
         return button
     }()
     
@@ -56,7 +56,8 @@ class DeletedTaskCell: UITableViewCell {
     func configure(task: Task) {
         self.task = task
         taskLabel.text = task.text
-        taskLabel.textColor = .gray
+        taskLabel.textColor = .appGray
+        backgroundColor = .appBackground
         self.selectionStyle = .none
     }
     

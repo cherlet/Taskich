@@ -8,6 +8,7 @@ class ArchiveViewController: UIViewController {
         let table = UITableView()
         table.register(TaskCell.self, forCellReuseIdentifier: "TaskCell")
         table.separatorStyle = .none
+        table.backgroundColor = .appBackground
         return table
     }()
     
@@ -18,12 +19,13 @@ class ArchiveViewController: UIViewController {
         tableView.dataSource = self
         setupView()
         updateData()
+        view.backgroundColor = .appBackground
     }
     
     // MARK: - Setup Methods
     private func setupView() {
         title = "Архив"
-        view.backgroundColor = .white
+        view.backgroundColor = .appBackground
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

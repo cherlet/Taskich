@@ -37,7 +37,7 @@
 		074B21E22AFBEA630014DEC8 /* TagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B21E12AFBEA630014DEC8 /* TagCell.swift */; };
 		075DD2C22AFA47E0002DB3C4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075DD2C12AFA47E0002DB3C4 /* NotificationManager.swift */; };
 		077E090F2AF6DA0300F9AC16 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 077E090D2AF6DA0300F9AC16 /* CoreData.xcdatamodeld */; };
-		07BA390F2AFB8700009ECE95 /* CustomColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BA390E2AFB8700009ECE95 /* CustomColor.swift */; };
+		07BA390F2AFB8700009ECE95 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BA390E2AFB8700009ECE95 /* AppColor.swift */; };
 		07BA39112AFB8934009ECE95 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BA39102AFB8934009ECE95 /* Tag.swift */; };
 		07BA39132AFB8B80009ECE95 /* TagListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BA39122AFB8B80009ECE95 /* TagListViewController.swift */; };
 		07D077342AF7F8610030DB86 /* TimePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D077332AF7F8610030DB86 /* TimePickerViewController.swift */; };
@@ -74,7 +74,7 @@
 		074B21E12AFBEA630014DEC8 /* TagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCell.swift; sourceTree = "<group>"; };
 		075DD2C12AFA47E0002DB3C4 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		077E090E2AF6DA0300F9AC16 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
-		07BA390E2AFB8700009ECE95 /* CustomColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColor.swift; sourceTree = "<group>"; };
+		07BA390E2AFB8700009ECE95 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		07BA39102AFB8934009ECE95 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		07BA39122AFB8B80009ECE95 /* TagListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagListViewController.swift; sourceTree = "<group>"; };
 		07D077332AF7F8610030DB86 /* TimePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePickerViewController.swift; sourceTree = "<group>"; };
@@ -151,7 +151,7 @@
 				07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */,
 				074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */,
 				074B21DF2AFBE44C0014DEC8 /* MenuTagsView.swift */,
-				07BA390E2AFB8700009ECE95 /* CustomColor.swift */,
+				07BA390E2AFB8700009ECE95 /* AppColor.swift */,
 				073F8AE72AFCBB310004D63C /* ColorPickerView.swift */,
 				0717C8A12AF2E96400D29342 /* Cells */,
 			);
@@ -291,7 +291,7 @@
 			files = (
 				0717C88D2AF2E77F00D29342 /* TrashViewController.swift in Sources */,
 				0717C88F2AF2E77F00D29342 /* AddFormViewController.swift in Sources */,
-				07BA390F2AFB8700009ECE95 /* CustomColor.swift in Sources */,
+				07BA390F2AFB8700009ECE95 /* AppColor.swift in Sources */,
 				0717C88C2AF2E77F00D29342 /* TaskListViewController.swift in Sources */,
 				0717C8A72AF2E98B00D29342 /* EditModeToolbarView.swift in Sources */,
 				0717C88A2AF2E77F00D29342 /* ArchiveViewController.swift in Sources */,

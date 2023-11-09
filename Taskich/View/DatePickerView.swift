@@ -18,19 +18,19 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
     }()
     private let separatorLine: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.backgroundColor = .appGray
         return view
     }()
     private let previousButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .appText
         return button
     }()
     private let nextButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .appText
         return button
     }()
 
@@ -58,13 +58,10 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(DateCell.self, forCellWithReuseIdentifier: "DateCell")
-        collectionView.backgroundColor = .clear
+        collectionView.backgroundColor = .appBackground
         
-        let width = collectionView.frame.width / 7
-        layout.itemSize = CGSize(width: width, height: width)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
-        layout.headerReferenceSize = CGSize(width: collectionView.frame.width, height: 50)
         layout.sectionHeadersPinToVisibleBounds = true
         
         previousButton.addTarget(self, action: #selector(didTapPreviousButton), for: .touchUpInside)
@@ -97,6 +94,16 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let width = self.bounds.width / 7
+        layout.itemSize = CGSize(width: width, height: width)
+        layout.headerReferenceSize = CGSize(width: self.bounds.width, height: 50)
+        
+        collectionView.reloadData()
     }
     
     private func setupMonth() {
@@ -269,9 +276,9 @@ class DatePickerView: UIView, UICollectionViewDelegate, UICollectionViewDataSour
         previousButton.isEnabled = !(displayedYearMonth.year == currentYearMonth.year && displayedYearMonth.month == currentYearMonth.month)
         
         if previousButton.isEnabled {
-            previousButton.tintColor = .black
+            previousButton.tintColor = .appText
         } else {
-            previousButton.tintColor = .gray
+            previousButton.tintColor = .appGray
         }
     }
     

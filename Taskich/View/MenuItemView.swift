@@ -5,9 +5,9 @@ class MenuItemView: UIView {
     let image = UIImageView()
     
     func setupView() {
-        backgroundColor = .clear
-        image.tintColor = .gray
-        label.textColor = .black
+        backgroundColor = .appBackground
+        image.tintColor = .appGray
+        label.textColor = .appText
         
         [image, label].forEach {
             addSubview($0)

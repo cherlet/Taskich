@@ -59,27 +59,15 @@ class ContainerViewController: UIViewController {
     
     private func configureNavigationBar() {
         let barItem = UIBarButtonItem(image: UIImage(systemName: "list.dash"), style: .done, target: self, action: #selector(didTapMenuButton))
-        barItem.tintColor = .black
+        barItem.tintColor = .appText
         
         [taskListViewController, archiveViewController, trashViewController].forEach {
             $0.navigationItem.leftBarButtonItem = barItem
         }
         
-        let settingsBarItem = UIBarButtonItem(image: UIImage(systemName: "gear"),
-                                      style: .done,
-                                      target: self,
-                                      action: #selector(didSettingsButtonTapped))
-        
-        settingsBarItem.tintColor = .gray
-        menuViewController.navigationItem.leftBarButtonItem = settingsBarItem
-        
         menuViewController.tasksNeedUpdate = {
             self.updateCurrent()
         }
-    }
-    
-    @objc private func didSettingsButtonTapped() {
-        print("SEETINGS")
     }
     
     private lazy var swipeOpenMenu: UISwipeGestureRecognizer = {

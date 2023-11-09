@@ -14,12 +14,12 @@ class WeekdaysHeaderView: UICollectionReusableView {
     }
     
     private func setupViews() {
-        backgroundColor = .white
+        backgroundColor = .appBackground
         
         for day in daysOfWeek {
             let label = UILabel()
             label.text = day
-            label.textColor = .gray
+            label.textColor = .appGray
             label.textAlignment = .center
             label.font = UIFont.systemFont(ofSize: 16)
             addSubview(label)
