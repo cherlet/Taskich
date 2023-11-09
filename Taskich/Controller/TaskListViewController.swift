@@ -168,15 +168,6 @@ class TaskListViewController: UITableViewController,  UITableViewDragDelegate, U
             tasks[destinationIndexPath.section].insert(movedTask, at: destinationIndexPath.row)
         }
     }
-    
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        
-        if section == 1 {
-            if let headerView = view as? UITableViewHeaderFooterView {
-                headerView.textLabel?.textColor = .appAccent
-            }
-        }
-    }
 
     
     // MARK: - Drag&Drop protocol

@@ -35,19 +35,19 @@ class DateCell: UICollectionViewCell {
         label.layer.cornerRadius = 20
         
         if day.state.isSelected {
-            label.textColor = .systemGreen
+            label.textColor = .appAccent
             label.layer.borderWidth = 1.5
-            label.layer.borderColor = UIColor.systemGreen.cgColor
+            label.layer.borderColor = UIColor.appAccent.cgColor
         } else {
             label.layer.borderWidth = 0
             label.layer.borderColor = nil
             
             if day.state.isCurrent {
-                label.textColor = .systemGreen
+                label.textColor = .appAccent
             } else if day.state.isPast {
-                label.textColor = .gray
+                label.textColor = .appGray
             } else {
-                label.textColor = .black
+                label.textColor = .appText
             }
         }
     }
