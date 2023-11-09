@@ -260,6 +260,16 @@ public final class StorageManager {
         }
     }
     
+    public func fetchTagsWithoutTag(with id: UUID) -> [Tag] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        fetchRequest.predicate = NSPredicate(format: "id != %@", id as CVarArg)
+        
+        do {
+            let tags = try? context.fetch(fetchRequest) as? [Tag]
+            return tags ?? []
+        }
+    }
+    
     public func fetchTag(with id: UUID) -> Tag? {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

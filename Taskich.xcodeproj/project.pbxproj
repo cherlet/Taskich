@@ -29,6 +29,9 @@
 		0717C8AC2AF2E9AE00D29342 /* DeletedTaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */; };
 		0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */; };
 		07270B712AF4313900FC53C6 /* TaskPresenterFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */; };
+		073F8AE42AFCB2230004D63C /* TagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073F8AE32AFCB2230004D63C /* TagViewController.swift */; };
+		073F8AE62AFCBAD40004D63C /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073F8AE52AFCBAD40004D63C /* ColorCell.swift */; };
+		073F8AE82AFCBB310004D63C /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073F8AE72AFCBB310004D63C /* ColorPickerView.swift */; };
 		074B21DE2AFBD0AC0014DEC8 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */; };
 		074B21E02AFBE44C0014DEC8 /* MenuTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B21DF2AFBE44C0014DEC8 /* MenuTagsView.swift */; };
 		074B21E22AFBEA630014DEC8 /* TagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074B21E12AFBEA630014DEC8 /* TagCell.swift */; };
@@ -63,6 +66,9 @@
 		0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeletedTaskCell.swift; sourceTree = "<group>"; };
 		0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskCell.swift; sourceTree = "<group>"; };
 		07270B702AF4313900FC53C6 /* TaskPresenterFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresenterFieldView.swift; sourceTree = "<group>"; };
+		073F8AE32AFCB2230004D63C /* TagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagViewController.swift; sourceTree = "<group>"; };
+		073F8AE52AFCBAD40004D63C /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
+		073F8AE72AFCBB310004D63C /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItemView.swift; sourceTree = "<group>"; };
 		074B21DF2AFBE44C0014DEC8 /* MenuTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTagsView.swift; sourceTree = "<group>"; };
 		074B21E12AFBEA630014DEC8 /* TagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCell.swift; sourceTree = "<group>"; };
@@ -110,6 +116,7 @@
 			children = (
 				0717C8872AF2E77F00D29342 /* AddFormViewController.swift */,
 				0717C8822AF2E77F00D29342 /* ArchiveViewController.swift */,
+				073F8AE32AFCB2230004D63C /* TagViewController.swift */,
 				0717C8882AF2E77F00D29342 /* ContainerViewController.swift */,
 				0717C8832AF2E77F00D29342 /* DatePickerViewController.swift */,
 				0717C8892AF2E77F00D29342 /* MenuViewController.swift */,
@@ -145,6 +152,7 @@
 				074B21DD2AFBD0AC0014DEC8 /* MenuItemView.swift */,
 				074B21DF2AFBE44C0014DEC8 /* MenuTagsView.swift */,
 				07BA390E2AFB8700009ECE95 /* CustomColor.swift */,
+				073F8AE72AFCBB310004D63C /* ColorPickerView.swift */,
 				0717C8A12AF2E96400D29342 /* Cells */,
 			);
 			path = View;
@@ -173,6 +181,7 @@
 				0717C8A92AF2E9AE00D29342 /* DeletedTaskCell.swift */,
 				0717C8AA2AF2E9AE00D29342 /* TaskCell.swift */,
 				074B21E12AFBEA630014DEC8 /* TagCell.swift */,
+				073F8AE52AFCBAD40004D63C /* ColorCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -302,11 +311,14 @@
 				0717C8A62AF2E98B00D29342 /* DatePickerView.swift in Sources */,
 				074B21E02AFBE44C0014DEC8 /* MenuTagsView.swift in Sources */,
 				074B21E22AFBEA630014DEC8 /* TagCell.swift in Sources */,
+				073F8AE82AFCBB310004D63C /* ColorPickerView.swift in Sources */,
 				0717C89F2AF2E90900D29342 /* Day.swift in Sources */,
 				0717C8912AF2E77F00D29342 /* MenuViewController.swift in Sources */,
 				0717C88B2AF2E77F00D29342 /* DatePickerViewController.swift in Sources */,
 				0717C8AD2AF2E9AE00D29342 /* TaskCell.swift in Sources */,
+				073F8AE62AFCBAD40004D63C /* ColorCell.swift in Sources */,
 				0712AEAA2AF7BA0400B8BF0F /* Task.swift in Sources */,
+				073F8AE42AFCB2230004D63C /* TagViewController.swift in Sources */,
 				0717C8802AF2E6E800D29342 /* AppDelegate.swift in Sources */,
 				075DD2C22AFA47E0002DB3C4 /* NotificationManager.swift in Sources */,
 			);

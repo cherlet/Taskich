@@ -8,6 +8,7 @@ class MenuViewController: UIViewController {
     // MARK: - Properties
     weak var delegate: MenuViewControllerDelegate?
     private let menuTagsView = MenuTagsView()
+    var tasksNeedUpdate: (() -> Void)?
     
     private lazy var tasks: MenuItemView = {
         let item = MenuItemView()
@@ -65,6 +66,7 @@ class MenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupMenuActions()
     }
     
     // MARK: - Setup Methods
@@ -123,6 +125,16 @@ class MenuViewController: UIViewController {
         ])
     }
     
+    private func setupMenuActions() {
+        menuTagsView.returnEditedTag = { tagID in
+            self.tagUpdateButtonTapped(with: tagID)
+        }
+
+        menuTagsView.returnDeletedTag = { tagID in
+            self.tagDeleteButtonTapped(with: tagID)
+        }
+    }
+    
     private lazy var tasksTapGestureRecognizer: UITapGestureRecognizer = {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tasksViewTapped))
         return tapGesture
@@ -151,6 +163,37 @@ class MenuViewController: UIViewController {
     }
     
     @objc private func tagAddButtonTapped() {
-        print("LETS GOOOOOOOOOOO")
+        let tagViewController = TagViewController()
+        tagViewController.modalPresentationStyle = .overFullScreen
+        tagViewController.appear(sender: self)
+        tagViewController.onTagAdded = { text, color in
+            StorageManager.shared.createTag(name: text, color: color)
+            self.menuTagsView.updateData()
+        }
     }
+    
+    private func tagUpdateButtonTapped(with id: UUID) {
+        let tagViewController = TagViewController()
+        let updatedTag = StorageManager.shared.fetchTag(with: id)
+        tagViewController.modalPresentationStyle = .overFullScreen
+        tagViewController.appear(sender: self, tagToUpdate: updatedTag)
+        tagViewController.onTagUpdated = { text, color in
+            StorageManager.shared.updateTag(with: id, newName: text, newColor: color)
+            self.menuTagsView.updateData()
+        }
+    }
+    
+    private func tagDeleteButtonTapped(with id: UUID) {
+        let tagListViewController = TagListViewController()
+        let replacedTag = StorageManager.shared.fetchTag(with: id)
+        tagListViewController.modalPresentationStyle = .overFullScreen
+        tagListViewController.appear(sender: self, toReplace: replacedTag)
+        tagListViewController.tagSelected = { tag in
+            StorageManager.shared.deleteTag(with: id, replaceWith: tag)
+            self.menuTagsView.updateData()
+            self.tasksNeedUpdate?()
+        }
+    }
+    
+    
 }

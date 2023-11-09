@@ -5,6 +5,9 @@ class TagCell: UITableViewCell {
     private var taskTag: Tag?
     var isEditingMode = false
     
+    var onEditButton: (() -> Void)?
+    var onDeleteButton: (() -> Void)?
+    
     private lazy var tagLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
@@ -27,6 +30,9 @@ class TagCell: UITableViewCell {
         button.setImage(UIImage(systemName: "pencil"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = buttonSize / 2
+        button.addTarget(self,
+                         action: #selector(editButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
@@ -36,12 +42,14 @@ class TagCell: UITableViewCell {
         button.setImage(UIImage(systemName: "trash.fill"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = buttonSize / 2
+        button.addTarget(self,
+                         action: #selector(deleteButtonTapped),
+                         for: .touchUpInside)
         return button
     }()
     
     private let buttonSize: CGFloat = 32
     private var deleteButtonTrailingConstraint: NSLayoutConstraint?
-    private var editButtonTrailingConstraint: NSLayoutConstraint?
     
     
     // MARK: - Initializers
@@ -72,11 +80,9 @@ class TagCell: UITableViewCell {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        deleteButtonTrailingConstraint = deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor)
-        editButtonTrailingConstraint = editButton.trailingAnchor.constraint(equalTo: trailingAnchor)
+        deleteButtonTrailingConstraint = deleteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 70)
         
         deleteButtonTrailingConstraint?.isActive = true
-        editButtonTrailingConstraint?.isActive = true
         
         NSLayoutConstraint.activate([
             circleView.widthAnchor.constraint(equalToConstant: circleSize),
@@ -95,23 +101,30 @@ class TagCell: UITableViewCell {
             editButton.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
             editButton.widthAnchor.constraint(equalToConstant: buttonSize),
             editButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            editButton.trailingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: -4)
         ])
     }
     
-    // MARK: - Other methods
+    // MARK: - Action methods
+    
+    @objc private func deleteButtonTapped() {
+        onDeleteButton?()
+    }
+    
+    @objc private func editButtonTapped() {
+        onEditButton?()
+    }
     
     func configureEditingTools(isEditingMode: Bool) {
         self.isEditingMode = isEditingMode
         if isEditingMode {
             UIView.animate(withDuration: 0.2) {
                 self.deleteButtonTrailingConstraint?.constant = -60
-                self.editButtonTrailingConstraint?.constant = -100
                 self.layoutIfNeeded()
             }
         } else {
             UIView.animate(withDuration: 0.2) {
-                self.deleteButtonTrailingConstraint?.constant = 0
-                self.editButtonTrailingConstraint?.constant = 0
+                self.deleteButtonTrailingConstraint?.constant = 70
                 self.layoutIfNeeded()
             }
         }

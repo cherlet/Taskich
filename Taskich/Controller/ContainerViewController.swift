@@ -72,6 +72,10 @@ class ContainerViewController: UIViewController {
         
         settingsBarItem.tintColor = .gray
         menuViewController.navigationItem.leftBarButtonItem = settingsBarItem
+        
+        menuViewController.tasksNeedUpdate = {
+            self.updateCurrent()
+        }
     }
     
     @objc private func didSettingsButtonTapped() {

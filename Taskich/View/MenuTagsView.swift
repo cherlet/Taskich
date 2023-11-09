@@ -3,6 +3,9 @@ import UIKit
 class MenuTagsView: UITableView {
     var tags = [Tag]()
     
+    var returnEditedTag: ((UUID) -> Void)?
+    var returnDeletedTag: ((UUID) -> Void)?
+    
     init() {
         super.init(frame: .zero, style: .plain)
         self.dataSource = self
@@ -35,7 +38,21 @@ extension MenuTagsView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TagCell", for: indexPath) as? TagCell else { fatalError() }
-        cell.configure(tag: tags[indexPath.row])
+        
+        let tag = tags[indexPath.row]
+        
+        cell.configure(tag: tag)
+        
+        cell.onEditButton = {
+            self.returnEditedTag?(tag.id)
+            cell.configureEditingTools(isEditingMode: false)
+        }
+        
+        cell.onDeleteButton = {
+            self.returnDeletedTag?(tag.id)
+            cell.configureEditingTools(isEditingMode: false)
+        }
+        
         return cell
     }
 }
@@ -43,6 +60,7 @@ extension MenuTagsView: UITableViewDataSource {
 extension MenuTagsView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? TagCell {
+            
             if cell.isEditingMode {
                 cell.configureEditingTools(isEditingMode: false)
             } else {
